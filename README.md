@@ -154,6 +154,14 @@ python3 scripts/analyze_repo.py . --json
 - 位图生成取决于当前 Agent 的能力和风格卡。纯 SVG 可作为回退。
 - 默认交付本地文件和差异摘要。提交、推送和开 PR 需要明确授权。
 
+## 关于守一科技
+
+守一科技自研 AI 产品，并通过 FDE 帮助企业将 AI 用到实际业务流程中。[守一科技官网](https://www.byteee.com)
+
+<a href="https://www.byteee.com">
+  <img src="assets/readme/byteee-banner.png" alt="守一科技 · 自研 AI 产品与企业 AI 落地（FDE）" width="560">
+</a>
+
 ## 许可证
 
 MIT
