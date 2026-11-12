@@ -1,7 +1,8 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/readme/hero-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="assets/readme/hero-light.svg">
-  <img src="assets/readme/hero-light.svg" alt="beauty-readme 为你的项目设计 GitHub README。校样展示改版前的风格推荐 swiss-grid。" width="100%">
+  <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="assets/readme/hero-dark.svg">
+  <source media="(prefers-reduced-motion: reduce)" srcset="assets/readme/hero-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/readme/hero-dark.gif">
+  <img src="assets/readme/hero-light.gif" alt="beauty-readme 为你的项目设计 GitHub README。校样展示改版前的风格推荐 swiss-grid。" width="100%">
 </picture>
 
 **beauty-readme** 是一个为 GitHub 项目设计 README 的 Agent 技能。它先读源码、命令输出和现有素材，再选版式、重排正文，制作可在 GitHub 显示的 SVG 封面、章节图或流程图。
