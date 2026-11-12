@@ -1,0 +1,91 @@
+{
+  "project": "beauty-readme",
+  "lang": "en",
+  "suffix": "-en",
+  "label": "ILLUSTRATIVE",
+  "demo": "DEMO",
+  "you": "PROMPT",
+  "agent": "PREVIEW",
+  "label_tracking": 0.5,
+  "fonts": {
+    "mono": "Monaco.ttf",
+    "monob": "Monaco.ttf",
+    "head": "Inter-650.ttf",
+    "headm": "Inter-650.ttf"
+  },
+  "themes": {
+    "light": {
+      "paper": "#FAFCFF",
+      "ink": "#142235",
+      "muted": "#42556D",
+      "acc": "#275591",
+      "hair": "#B3C1D0",
+      "bubble": "#E7EEF6",
+      "edge": "#B3C1D0",
+      "gif_bg": "#F0F4F8"
+    },
+    "dark": {
+      "paper": "#1A2A3E",
+      "ink": "#ECF4FC",
+      "muted": "#B0C1D3",
+      "acc": "#A3CCFF",
+      "hair": "#536B84",
+      "bubble": "#243951",
+      "edge": "#536B84",
+      "gif_bg": "#121D2B"
+    }
+  },
+  "scenes": [
+    {
+      "id": "rewrite",
+      "title": "STYLE RECOMMENDATION",
+      "prompt": "Use beauty-readme to redesign this repository's README. Show me a local preview and don't commit.",
+      "summary": "The style recommendation from before this repository's redesign, with the files produced.",
+      "reply": [
+        {
+          "kind": "line",
+          "k": "recommendation",
+          "v": "{\"mode\": \"auto\", \"pick\": \"swiss-grid\"}",
+          "tone": "acc",
+          "bold": true
+        },
+        {
+          "kind": "rule"
+        },
+        {
+          "kind": "line",
+          "k": "Files",
+          "v": "README.md, hero-light.svg, hero-dark.svg"
+        }
+      ]
+    },
+    {
+      "id": "hero-only",
+      "title": "COVER ONLY",
+      "prompt": "Use beauty-readme to create a cover for this repository. Leave the README text as is.",
+      "summary": "An example of what the cover-only scope delivers, using the cover filenames from this page.",
+      "reply": [
+        {
+          "kind": "line",
+          "k": "Cover assets",
+          "v": "hero-light.svg, hero-dark.svg",
+          "tone": "acc",
+          "bold": true
+        },
+        {
+          "kind": "line",
+          "k": "Embed snippet",
+          "v": "<picture>"
+        },
+        {
+          "kind": "rule"
+        },
+        {
+          "kind": "line",
+          "k": "README text",
+          "v": "Unchanged"
+        }
+      ]
+    }
+  ]
+}

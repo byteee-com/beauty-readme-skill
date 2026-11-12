@@ -12,7 +12,7 @@
 | :-- | :-- |
 | `recommendation.pick` 为 `swiss-grid`，`recommendation.mode` 为 `auto` | 本次改版前运行 `python3 scripts/analyze_repo.py . --json` 的结果，字段定义见 [analyze_repo.py](../../scripts/analyze_repo.py#L418-L451)。这份封面记录的是改版前的分析，新增 GIF 后脚本也会把演示算入素材。 |
 | 校样里的安装和内置风格 | [README 的实际章节](../../README.md) |
-| 自动推荐分镜 | [可复制的提示词](../../README.md#L43-L61)、改版前的推荐字段，以及本次生成的 README 与封面 |
+| 自动推荐分镜 | [可复制的提示词](../../README.md#L45-L63)、改版前的推荐字段，以及本次生成的 README 与封面 |
 | 只做素材分镜 | [素材交付规则](../../SKILL.md#L40-L48)、[图片嵌入示例](../../references/native-markdown.md#L33-L43)和本次生成的封面文件名 |
 
 分析初次运行时瑞士网格得 30 分，霓虹终端和编辑海报未满足风格卡的素材前提。项目是带辅助脚本的 Agent 技能，文档型骨架适合把安装和第一条提示词放在封面后面。沿用 [瑞士网格](../../styles/swiss-grid.yaml) 与[文档型骨架](../../skeletons/document.md)，视觉重量 L1，两个演示内折，不加章节装饰图。
@@ -70,6 +70,10 @@ python3 scripts/render_preview.py assets/readme --github
 | :-- | --: | --: | --: |
 | 自动推荐 | 141 KiB | 136 KiB | 5.96 秒 |
 | 只做素材 | 124 KiB | 118 KiB | 6.07 秒 |
+
+## 英文素材
+
+[英文 README](../../README.en.md) 的封面和演示在 [en/](en/) 下，沿用同一套深浅主题和动效。英文封面用 Inter 650 排正文，转路径时沿用 `wordmark` 和 `mono` 的映射。将上面的分镜命令改用 `assets/readme/en/src/demo.json`，并将输出目录改为 `assets/readme/en/demo`，即可重建英文演示。
 
 ## Review log
 

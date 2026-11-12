@@ -1,3 +1,5 @@
+**简体中文** · [English](README.en.md)
+
 <picture>
   <source media="(prefers-reduced-motion: reduce) and (prefers-color-scheme: dark)" srcset="assets/readme/hero-dark.svg">
   <source media="(prefers-reduced-motion: reduce)" srcset="assets/readme/hero-light.svg">
