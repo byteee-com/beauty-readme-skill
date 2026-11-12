@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720" role="img" aria-labelledby="title desc">
+  <title id="title">Tidemap：把城市潮汐数据变成一张可探索的地图</title>
+  <desc id="desc">示例 hero（编辑海报风格，纯 SVG 兜底版本）。对角线构图：左上为期刊式标签与大号衬线标题，右下为由等高线母题构成的几何主体，一条斜向色块连接两者。所有文字均为占位示例。</desc>
+  <style>
+    :root { --bg:#F2F4F1; --ink:#141414; --accent:#FF4F1F; --support:#2B59FF; }
+    .bg { fill: var(--bg); }
+    .serif { font-family: "Fraunces", "Instrument Serif", "Iowan Old Style", "Songti SC", Georgia, serif; }
+    .sans { font-family: -apple-system, "Segoe UI", "Noto Sans", "PingFang SC", sans-serif; }
+    .kicker { fill: var(--ink); font-size: 20px; letter-spacing: 3px; font-weight: 600; }
+    .title { fill: var(--ink); font-size: 148px; font-weight: 800; letter-spacing: -4px; }
+    .sub { fill: var(--ink); font-size: 34px; }
+    .meta { fill: var(--ink); font-size: 18px; letter-spacing: 1.5px; }
+    .contour { fill: none; stroke: var(--support); stroke-width: 3; }
+    .contour-soft { fill: none; stroke: var(--support); stroke-width: 3; opacity: .45; }
+    .band { fill: var(--accent); }
+    .crop { stroke: var(--ink); stroke-width: 2; }
+  </style>
+
+  <rect class="bg" width="1280" height="720"/>
+
+  <!-- 斜向色块连接标题与主体 -->
+  <polygon class="band" points="0,520 1280,240 1280,330 0,610" opacity="0.92"/>
+
+  <!-- 主体：等高线母题（纯 SVG 兜底；有生图能力时可替换为去背景主体图层） -->
+  <g transform="translate(960 470)">
+    <ellipse class="contour" rx="250" ry="170"/>
+    <ellipse class="contour" rx="200" ry="134" transform="rotate(-8)"/>
+    <ellipse class="contour" rx="150" ry="100" transform="rotate(-14) translate(10 -4)"/>
+    <ellipse class="contour" rx="100" ry="66" transform="rotate(-20) translate(18 -8)"/>
+    <ellipse class="contour" rx="52" ry="34" transform="rotate(-26) translate(24 -10)"/>
+    <ellipse class="contour-soft" rx="300" ry="206" transform="rotate(4)"/>
+    <circle cx="30" cy="-14" r="8" fill="var(--ink)"/>
+  </g>
+
+  <!-- 期刊式标签 -->
+  <g class="sans">
+    <text x="64" y="88" class="kicker">ISSUE 01 · OPEN SOURCE</text>
+    <text x="1216" y="88" class="meta" text-anchor="end">N 31°14′ / E 121°29′</text>
+  </g>
+
+  <!-- 标题 -->
+  <g class="serif">
+    <text x="56" y="250" class="title">Tidemap</text>
+  </g>
+  <g class="sans">
+    <text x="64" y="316" class="sub">把城市潮汐数据，</text>
+    <text x="64" y="364" class="sub">变成一张可探索的地图。</text>
+  </g>
+
+  <!-- 裁切标记母题 -->
+  <g class="crop">
+    <line x1="32" y1="660" x2="64" y2="660"/><line x1="64" y1="660" x2="64" y2="692"/>
+    <line x1="1216" y1="660" x2="1248" y2="660"/><line x1="1216" y1="660" x2="1216" y2="692"/>
+  </g>
+  <text x="640" y="680" class="sans meta" text-anchor="middle">WEB APP · MIT</text>
+</svg>

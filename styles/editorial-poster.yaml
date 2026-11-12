@@ -1,0 +1,90 @@
+# 风格卡：海报型 · 编辑插画
+id: editorial-poster
+name: 编辑海报
+skeleton: poster              # 对应 skeletons/poster.md
+example: editorial-poster.example.svg
+summary: 像杂志封面一样的大 hero，用强构图和项目母题建立第一印象；适合面向更广受众的项目。
+
+fit:
+  strong: [consumer-app, ai-product, creative, game, design-resource]
+  ok: [devtool, research]
+  avoid: [infra, sdk]
+  needs:
+    - has_visual_subject     # 至少有一项：截图 / logo / 明确的视觉母题（地图、角色、作品）
+signals:
+  - keyword: [app, ai, agent, design, creative, game, studio, editor, generate, visual, story]
+  - file: [screenshots/, assets/, public/, docs/images/, "*.png", "*.gif"]
+  - dependency: [react, vue, svelte, next, electron, tauri, three, pixi, phaser]
+  - meta: [has_screenshots, has_website]
+
+default_weight: L2            # hero + 章节条 + 截图展示
+allows_raster: true           # 有生图能力时可用于主体（角色、材质、场景）；无则纯 SVG 几何构图
+allows_gif: true              # 检测到 GIF 生成能力时，可为主体做动态层（见 references/motion.md 第 5 节）
+
+tokens:
+  # 配色从项目派生：先取 logo / 截图主色，再按下列规则组成三色
+  derive:
+    base: 项目主色的深色或浅色变体作为背景（避免米色、奶油色、紫色渐变）
+    ink: 与 base 对比度 ≥ 7:1 的文字色
+    accent: 与主色呈互补或分裂互补的高饱和色，仅用于 1 个焦点
+  fallback_light:
+    bg: "#F2F4F1"
+    ink: "#141414"
+    accent: "#FF4F1F"
+    support: "#2B59FF"
+  fallback_dark:
+    bg: "#101216"
+    ink: "#F4F4F0"
+    accent: "#FF6A3D"
+    support: "#7A9BFF"
+  type:
+    display: 有个性的展示字体（衬线粗体如 Fraunces / Instrument Serif，或压缩无衬线如 Anton / Oswald；中文用思源宋体 Heavy / 站酷类字体），转路径
+    body: "-apple-system, 'Segoe UI', 'Noto Sans', 'PingFang SC', sans-serif"
+    scale: { title: 140, subtitle: 34, kicker: 22 }   # 1280 画布；≥22 才能在 GitHub 上 ≥14px
+    rules:
+      - 标题可跨两行、可与主体图形部分重叠（仅装饰层重叠，文字本身完整可读）
+      - kicker（小标题）全大写，放在标题上方
+  shape:
+    radius: "0 或 24（二选一，全套统一）"
+    stroke: 3
+    grid: 8
+
+composition:
+  hero:
+    canvas: "1280x720"
+    layout:                   # 选一种并全套沿用
+      - 对角线构图：标题左上，主体右下，一条斜向色块连接
+      - 中心主体：主体居中，标题压在主体下缘
+      - 分栏：左文右图，图出血到画布边缘
+    subject:
+      优先: 真实产品截图（放进设备框或裁切卡片）
+      其次: 生图生成的主体（角色 / 场景 / 材质），去背景后作为图层嵌入
+      兜底: 由项目母题构成的几何图形（例如地图项目 → 等高线；音乐项目 → 波形）
+    motif: 期刊式元素——期号/日期标签、页码、裁切标记，择 1–2 个
+  section_header:
+    canvas: "1280x200"
+    layout: 大号章节标题 + 小号 kicker，与 hero 同一字体与配色
+  showcase: 截图墙用 2–3 列 <table>，或合成一张 PNG/WebP
+
+tension:                      # 至少采用 2 条
+  - 物件即主体：画面主体是概念物件本身（票据、地图、仪表…），不是文字 + 装饰
+  - 斜切与叠压：物件可以旋转 2–6°、彼此叠压、被画布裁切
+  - 极端尺度：一个超大元素（字母、数字、印章）与密集小字并置
+  - 质感细节：撕口、齿孔、印章、折痕、条码等 2–3 个标志性细节，让物件可信
+
+motion:
+  default: false
+  allowed: [概念物件的关键状态变化（盖章、抵达、点亮）, 主体轻微入场]   # 只播一次，≤ 2s
+
+raster_rules:                 # allows_raster 为 true 时适用
+  - 生图仅用于无法用 SVG 精确绘制的主体；文字、排版、图表始终用 SVG
+  - 不生成真实人物、真实品牌产品、真实界面的替代品
+  - 生成后去背景（纯色背景 + 色键抠图），以 base64 嵌入 SVG 或作为独立 PNG 图层
+  - 在 DESIGN.md 记录生成提示词，便于复现
+
+forbid:
+  - 米色 / 奶油色 / 紫色渐变作为默认背景
+  - 手绘风小人、通用 3D 插画（等距办公桌、飞翔的火箭）
+  - 与项目无关的库存照片
+  - 每个章节都配一张插画
+  - 用生图伪造产品截图

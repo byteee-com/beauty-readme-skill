@@ -1,0 +1,82 @@
+# 风格卡：终端型 · 霓虹终端
+id: terminal-neon
+name: 霓虹终端
+skeleton: terminal            # 对应 skeletons/terminal.md
+example: terminal-neon.example.svg
+summary: 首屏就是真实命令与真实输出，让"怎么用"本身成为视觉。
+
+# ---- 适配规则（analyze_repo.py 与 Agent 打分使用）----
+fit:
+  strong: [cli, devtool, tui]
+  ok: [library, infra]
+  avoid: [design-resource, consumer-app, research]
+  needs:
+    - has_cli_entry          # 必须能找到真实可运行的命令
+signals:                     # 每命中一条 +5
+  - keyword: [cli, terminal, shell, command, tui, console, prompt]
+  - file: [bin/, cmd/, cli.py, __main__.py, main.go, src/main.rs]
+  - dependency: [clap, cobra, click, typer, commander, yargs, oclif, ink, bubbletea, ratatui]
+
+default_weight: L1            # 一张终端 hero + 原生 Markdown；方法复杂时升 L2
+allows_raster: false          # 纯 SVG；不使用 AI 生图
+allows_gif: false             # 动效用 SVG；演示用真实终端录屏（vhs / asciinema）
+
+# ---- 视觉 token ----
+tokens:
+  dark:                       # 主版本：深色
+    bg: "#0B0F14"
+    surface: "#121821"
+    border: "#1F2A37"
+    fg: "#E6EDF3"             # 对 bg 对比度 ≈ 15:1
+    muted: "#8B98A9"          # 对 bg 对比度 ≈ 6.4:1
+    accent: "{brand|#3DF2A3}" # 提示符、高亮；优先使用项目主题色
+    accent_2: "#7CC7FF"       # 次级（路径、参数）
+    warn: "#FFB86B"
+  light:
+    bg: "#F6F8FA"
+    surface: "#FFFFFF"
+    border: "#D0D7DE"
+    fg: "#1F2328"
+    muted: "#57606A"
+    accent: "{brand_darkened|#0A7F55}"   # 浅色下需加深以保证 ≥ 4.5:1
+    accent_2: "#0B63B6"
+    warn: "#9A5B00"
+  type:
+    display: 等宽字体做标题（JetBrains Mono / IBM Plex Mono / Berkeley Mono），转路径后使用
+    mono: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+    scale: { title: 88, subtitle: 30, code: 26, caption: 22 }   # 1280 宽画布
+  shape:
+    radius: 12                # 终端窗口圆角
+    stroke: 1.5
+    grid: 8
+
+# ---- 构图 ----
+composition:
+  hero:
+    canvas: "1280x640"
+    layout: 左侧 40% 放项目名与一句话定位；右侧 60% 放终端窗口
+    terminal_window:
+      - 顶栏三个圆点用灰色而非红黄绿（避免套路），或改用标签页显示真实二进制名
+      - 内容只能是真实命令及真实输出（来自项目 README / 示例 / 实际运行）
+      - 最多 6 行；输出可截断并以 "…" 结尾
+    motif: 提示符 "❯" 或 "$"、闪烁块光标、扫描线（≤ 4% 不透明度）
+  section_header: 用 "## " 原生标题即可；L2 时可做 "❯ section-name" 形式的 1280x160 章节条
+  diagram: 管道式流程（input │ cmd │ output），用 │ 和 ─ 线条
+
+tension:                      # 至少采用 2 条
+  - 真实优先：终端里只放源码中真实存在的命令与输出字段，并让输出本身占据 ≥ 50% 面积
+  - 焦点高亮：全屏低亮度，只有"关键一行"（确认、结果、错误）用强调色发光
+  - 裁切：终端窗口可以溢出画布边缘，暗示"还有更多输出"，而不是完整居中的小窗口
+  - 尺度对比：一个超大字符（提示符、光标、退出码）作为构图锚点
+
+motion:
+  default: false
+  allowed: [光标闪烁, 逐行出现输出, 打字效果]
+
+# ---- 禁止 ----
+forbid:
+  - 编造命令或输出（必须与项目真实行为一致）
+  - 矩阵数字雨、黑客骷髅、绿色代码瀑布等陈词滥调
+  - 大面积霓虹发光（glow 只用在光标或单个关键词上）
+  - 红黄绿窗口按钮作为唯一装饰
+  - 在终端窗口里放超过一条命令的长脚本

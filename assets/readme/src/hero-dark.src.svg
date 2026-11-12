@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="544" viewBox="0 0 1280 544" role="img" aria-labelledby="title desc">
+  <title id="title">beauty-readme · 为项目设计 GitHub README</title>
+  <desc id="desc">深色校样显示器用定位标线叠出页面轮廓，蓝色高亮区标出推荐的 README 风格。 改版前分析脚本的 recommendation.pick 为 swiss-grid。</desc>
+  <rect width="1280" height="544" fill="#121D2B"/>
+  <path d="M72 100H1208M72 507H1208" stroke="#536B84" stroke-width="2"/>
+  <path d="M72 100H168" stroke="#ECF4FC" stroke-width="4"/>
+  <text class="mono" x="72" y="80" font-family="monospace" font-size="23" letter-spacing="1.8" fill="#B0C1D3">AGENT SKILL</text>
+  <g fill="#ECF4FC" font-family="sans-serif" font-weight="850">
+    <text class="wordmark" x="67" y="241" font-size="176" letter-spacing="-5">beauty-</text>
+    <text class="wordmark" x="67" y="399" font-size="176" letter-spacing="-5">readme</text>
+  </g>
+  <text class="cjk" x="72" y="472" font-family="sans-serif" font-size="42" fill="#ECF4FC">为项目设计 GitHub README</text>
+
+  <path d="M736 102H1220V476H736Z" fill="#17263A"/><path d="M736 144H1220M736 184H1220M736 224H1220M736 264H1220M736 304H1220M736 344H1220M736 384H1220M736 424H1220M736 464H1220M756 102V476M796 102V476M836 102V476M876 102V476M916 102V476M956 102V476M996 102V476M1036 102V476M1076 102V476M1116 102V476M1156 102V476M1196 102V476" stroke="#243951" fill="none"/><path d="M754 137H1210V476H754Z" fill="none" stroke="#536B84" stroke-width="2" stroke-dasharray="6 5"/>
+  <path d="M764 113H781M773 104V121M1175 113H1192M1184 104V121M764 466H781M773 458V474M1175 466H1192M1184 458V474" stroke="#B0C1D3" stroke-width="2" fill="none"/>
+  <path d="M788 129H1169V450H788Z" fill="#1A2A3E" stroke="#536B84" stroke-width="2"/>
+  <path d="M807 129V450M1149 129V450" fill="none" stroke="#536B84" stroke-dasharray="3 5"/>
+  <text class="cjk" x="824" y="172" font-family="sans-serif" font-size="25" fill="#ECF4FC">排版校样</text>
+  <text class="mono" x="1130" y="172" text-anchor="end" font-family="monospace" font-size="22" fill="#B0C1D3">README.md</text>
+  <path d="M824 188H1131" stroke="#536B84" stroke-width="2"/>
+  <path d="M824 205H954V251H824Z" fill="#243951"/>
+  <path d="M975 216H1131M975 229H1101M975 242H1116" stroke="#4A6683" stroke-width="5"/>
+  <text class="cjk" x="824" y="292" font-family="sans-serif" font-size="23" fill="#B0C1D3">安装</text>
+  <text class="cjk" x="991" y="292" font-family="sans-serif" font-size="23" fill="#B0C1D3">内置风格</text>
+  <path d="M824 306H937M824 318H912M991 306H1131M991 318H1108" stroke="#4A6683" stroke-width="4"/>
+  <path d="M807 338H1149V429H807Z" fill="#A3CCFF"/>
+  <text class="mono" x="824" y="371" font-family="monospace" font-size="22" fill="#12243A">recommendation.pick</text>
+  <text class="mono" x="824" y="408" font-family="monospace" font-size="30" letter-spacing="0.3" fill="#12243A">swiss-grid</text>
+  <path d="M1100 391L1110 401L1128 382" fill="none" stroke="#12243A" stroke-width="3"/>
+  <path d="M1202 146H1208M1198 166H1208M1202 186H1208M1198 206H1208M1202 226H1208M1198 246H1208M1202 266H1208M1198 286H1208M1202 306H1208M1198 326H1208M1202 346H1208M1198 366H1208M1202 386H1208M1198 406H1208M1202 426H1208" fill="none" stroke="#536B84" stroke-width="2"/>
+</svg>

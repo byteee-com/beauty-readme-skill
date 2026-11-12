@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 480" width="1280" height="480" role="img" aria-labelledby="title desc">
+  <title id="title">mylib：面向 TypeScript 的类型安全数据校验库</title>
+  <desc id="desc">示例 hero（瑞士网格风格）。大号项目名左对齐，下方粗分隔线，分隔线下四栏元数据。所有文字均为占位示例。</desc>
+  <style>
+    :root { --bg:#FFFFFF; --fg:#111111; --muted:#5C5C5C; --rule:#111111; --accent:#E4002B; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg:#0D0D0D; --fg:#F2F2F2; --muted:#A3A3A3; --rule:#F2F2F2; --accent:#FF4D5E; }
+    }
+    .bg { fill: var(--bg); }
+    .sans { font-family: "Helvetica Neue", Helvetica, -apple-system, "Segoe UI", "Noto Sans", "PingFang SC", Arial, sans-serif; }
+    .title { fill: var(--fg); font-size: 160px; font-weight: 700; letter-spacing: -6px; }
+    .sub { fill: var(--fg); font-size: 32px; }
+    .label { fill: var(--muted); font-size: 16px; letter-spacing: 1.6px; font-weight: 600; }
+    .value { fill: var(--fg); font-size: 24px; font-weight: 500; }
+    .index { fill: var(--muted); font-size: 16px; letter-spacing: 1.2px; }
+    .rule { stroke: var(--rule); }
+    .accent { fill: var(--accent); }
+  </style>
+
+  <rect class="bg" width="1280" height="480"/>
+
+  <g class="sans">
+    <!-- 顶部标签行 -->
+    <text x="64" y="72" class="index">01 — LIBRARY</text>
+    <text x="1216" y="72" class="index" text-anchor="end">TYPESCRIPT</text>
+
+    <!-- 单一强调色块 -->
+    <rect class="accent" x="64" y="104" width="24" height="24"/>
+
+    <!-- 标题 -->
+    <text x="56" y="272" class="title">mylib</text>
+    <text x="64" y="324" class="sub">类型安全的数据校验，运行时与编译期一致。</text>
+
+    <!-- 粗分隔线 -->
+    <line class="rule" x1="64" y1="364" x2="1216" y2="364" stroke-width="3"/>
+
+    <!-- 12 列网格：4 栏，每栏 3 列 -->
+    <g>
+      <text x="64"  y="400" class="label">TYPE</text>
+      <text x="64"  y="436" class="value">Library</text>
+
+      <text x="358" y="400" class="label">RUNTIME</text>
+      <text x="358" y="436" class="value">Node 18+ / Browser</text>
+
+      <text x="652" y="400" class="label">LICENSE</text>
+      <text x="652" y="436" class="value">MIT</text>
+
+      <text x="946" y="400" class="label">VERSION</text>
+      <text x="946" y="436" class="value">1.0.0</text>
+    </g>
+    <line class="rule" x1="346" y1="384" x2="346" y2="444" stroke-width="1"/>
+    <line class="rule" x1="640" y1="384" x2="640" y2="444" stroke-width="1"/>
+    <line class="rule" x1="934" y1="384" x2="934" y2="444" stroke-width="1"/>
+  </g>
+</svg>

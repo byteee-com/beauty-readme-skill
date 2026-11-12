@@ -1,0 +1,64 @@
+{
+  "project": "beauty-readme",
+  "lang": "zh-CN",
+  "label": "分镜示例",
+  "demo": "演示",
+  "you": "提示词",
+  "agent": "交付预览",
+  "label_tracking": 0.5,
+  "fonts": {
+    "mono": "Monaco.ttf",
+    "monob": "Monaco.ttf",
+    "head": "Inter-650.ttf",
+    "headm": "Inter-650.ttf",
+    "fallback": ["SourceHanSansCN-Medium.otf"],
+    "fallback_bold": ["SourceHanSansCN-Medium.otf"]
+  },
+  "themes": {
+    "light": {
+      "paper": "#FAFCFF",
+      "ink": "#142235",
+      "muted": "#42556D",
+      "acc": "#275591",
+      "hair": "#B3C1D0",
+      "bubble": "#E7EEF6",
+      "edge": "#B3C1D0",
+      "gif_bg": "#F0F4F8"
+    },
+    "dark": {
+      "paper": "#1A2A3E",
+      "ink": "#ECF4FC",
+      "muted": "#B0C1D3",
+      "acc": "#A3CCFF",
+      "hair": "#536B84",
+      "bubble": "#243951",
+      "edge": "#536B84",
+      "gif_bg": "#121D2B"
+    }
+  },
+  "scenes": [
+    {
+      "id": "rewrite",
+      "title": "改版前的推荐",
+      "prompt": "用 beauty-readme 美化这个仓库的 README，先给我本地预览，不要提交。",
+      "summary": "展示改版前的分析脚本为本仓库返回的推荐字段，以及本次生成的 README 和深浅色封面。",
+      "reply": [
+        {"kind": "line", "k": "recommendation", "v": "{\"mode\": \"auto\", \"pick\": \"swiss-grid\"}", "tone": "acc", "bold": true},
+        {"kind": "rule"},
+        {"kind": "line", "k": "交付文件", "v": "README.md、hero-light.svg、hero-dark.svg"}
+      ]
+    },
+    {
+      "id": "hero-only",
+      "title": "只做素材",
+      "prompt": "用 beauty-readme 只做一张 hero，不要改 README。",
+      "summary": "按技能的只做素材模式演示交付范围，封面文件名取自本页。",
+      "reply": [
+        {"kind": "line", "k": "视觉资产", "v": "hero-light.svg、hero-dark.svg", "tone": "acc", "bold": true},
+        {"kind": "line", "k": "嵌入片段", "v": "<picture>"},
+        {"kind": "rule"},
+        {"kind": "line", "k": "README 正文", "v": "保持原样"}
+      ]
+    }
+  ]
+}
