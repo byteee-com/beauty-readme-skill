@@ -13,34 +13,38 @@
 
 ## Install
 
-Run these commands from this repository's root to install the skill in your personal Codex skills directory.
+With Node.js and npm installed, run this command in your terminal and select Codex, Claude Code, or another agent when prompted. A global installation makes the skill available across projects.
 
 ```bash
-mkdir -p ~/.codex/skills/beauty-readme
-cp -R SKILL.md references scripts skeletons styles ~/.codex/skills/beauty-readme/
+npx skills add byteee-com/beauty-readme-skill --global
 ```
 
 <details>
-<summary>Install for Claude Code</summary>
+<summary>Choose an agent or install to the current project</summary>
 
-**Personal installation**
+**Global installation for Codex**
 
 ```bash
-mkdir -p ~/.claude/skills/beauty-readme
-cp -R SKILL.md references scripts skeletons styles ~/.claude/skills/beauty-readme/
+npx skills add byteee-com/beauty-readme-skill --global --agent codex
 ```
 
-**Project installation** (set `target_repo` to the absolute path of the target repository)
+**Global installation for Claude Code**
 
 ```bash
-target_repo=/path/to/your-repo
-mkdir -p "$target_repo/.claude/skills/beauty-readme"
-cp -R SKILL.md references scripts skeletons styles "$target_repo/.claude/skills/beauty-readme/"
+npx skills add byteee-com/beauty-readme-skill --global --agent claude-code
+```
+
+**Project installation**
+
+Run this command from the target project directory and choose an agent when prompted.
+
+```bash
+npx skills add byteee-com/beauty-readme-skill
 ```
 
 </details>
 
-The skills directory may vary by agent version. Keep `SKILL.md` at the root of the `beauty-readme/` directory.
+See the [Skills CLI documentation](https://github.com/vercel-labs/skills/blob/main/docs/commands.md#skills-add) for installation options.
 
 ## Quick start
 
@@ -50,7 +54,7 @@ Open the repository you want to redesign and give your agent this prompt.
 Use beauty-readme to redesign this repository's README. Show me a local preview and don't commit.
 ```
 
-<details>
+<details open>
 <summary>See the automatic recommendation demo</summary>
 
 <picture>
@@ -70,7 +74,7 @@ The storyboard uses the [analyzer's recommendation](scripts/analyze_repo.py#L418
 | **Compare options** | Show me a few directions | Creates three cover thumbnails with distinct layouts for you to choose from |
 | **Specify a style** | Use the terminal style | Uses your chosen style and follows any existing brand guidelines |
 
-<details>
+<details open>
 <summary>Generate only the cover</summary>
 
 ```text

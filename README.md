@@ -13,34 +13,38 @@
 
 ## 安装
 
-在本仓库根目录运行以下命令，将技能安装到 Codex 的个人技能目录。
+需要已安装 Node.js 和 npm。在终端运行以下命令，按提示选择 Codex、Claude Code 等 Agent，全局安装后可在多个项目中使用。
 
 ```bash
-mkdir -p ~/.codex/skills/beauty-readme
-cp -R SKILL.md references scripts skeletons styles ~/.codex/skills/beauty-readme/
+npx skills add byteee-com/beauty-readme-skill --global
 ```
 
 <details>
-<summary>Claude Code 安装方式</summary>
+<summary>指定 Agent 或安装到当前项目</summary>
 
-**个人级**
+**Codex 全局安装**
 
 ```bash
-mkdir -p ~/.claude/skills/beauty-readme
-cp -R SKILL.md references scripts skeletons styles ~/.claude/skills/beauty-readme/
+npx skills add byteee-com/beauty-readme-skill --global --agent codex
 ```
 
-**项目级**（先把 `target_repo` 换成目标仓库的绝对路径）
+**Claude Code 全局安装**
 
 ```bash
-target_repo=/path/to/your-repo
-mkdir -p "$target_repo/.claude/skills/beauty-readme"
-cp -R SKILL.md references scripts skeletons styles "$target_repo/.claude/skills/beauty-readme/"
+npx skills add byteee-com/beauty-readme-skill --global --agent claude-code
+```
+
+**项目级安装**
+
+在目标项目目录运行以下命令，按提示选择 Agent。
+
+```bash
+npx skills add byteee-com/beauty-readme-skill
 ```
 
 </details>
 
-Agent 的技能目录可能随版本而异。`SKILL.md` 应位于 `beauty-readme/` 根目录。
+安装参数见 [Skills CLI 文档](https://github.com/vercel-labs/skills/blob/main/docs/commands.md#skills-add)。
 
 ## 快速上手
 
@@ -50,7 +54,7 @@ Agent 的技能目录可能随版本而异。`SKILL.md` 应位于 `beauty-readme
 用 beauty-readme 美化这个仓库的 README，先给我本地预览，不要提交。
 ```
 
-<details>
+<details open>
 <summary>查看自动推荐演示</summary>
 
 <picture>
@@ -70,7 +74,7 @@ Agent 的技能目录可能随版本而异。`SKILL.md` 应位于 `beauty-readme
 | **多方案对比** | 给我几个方向看看 | 做三张不同版式的封面缩略稿，供你选择 |
 | **指定风格** | 用终端风格 | 直接采用指定风格；已有品牌规范时沿用品牌视觉 |
 
-<details>
+<details open>
 <summary>只生成封面素材</summary>
 
 ```text
