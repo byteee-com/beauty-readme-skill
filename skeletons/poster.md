@@ -1,5 +1,5 @@
 <!--
-骨架：海报型（配合 styles/editorial-poster.yaml）
+骨架：海报型（默认配合 styles/editorial-poster.yaml、retro-pixel.yaml、risograph.yaml；也可被其他风格卡经 alt_skeletons 使用）
 特点：大 hero 建立第一印象；证据（截图 / 作品）前置；视觉重量 L2，可用章节条。
      章节条与 hero 共用同一字体、配色与构图语言。
 使用：Agent 复制本模板，替换 {占位}，删除不适用的段落与所有注释。

@@ -1,0 +1,94 @@
+# 风格卡：宣言型 · 新粗野
+id: brutalist-zine
+name: 新粗野宣言
+skeleton: manifesto           # 对应 skeletons/manifesto.md
+alt_skeletons: [terminal, poster]
+example: brutalist-zine.example.svg
+summary: 粗黑边框、硬投影、撞色色块和直白的大字；适合立场鲜明的项目——"不需要构建""零依赖""只做一件事"。
+
+fit:
+  strong: [devtool, creative]
+  ok: [cli, library, framework, consumer-app]
+  avoid: [research, sdk, infra]
+  needs: []
+signals:
+  - keyword: [opinionated, minimal, zero-config, zero-dependency, no-build, tiny, simple, hack, indie, manifesto, alternative, lightweight, unix]
+  - file: [MANIFESTO.md, PHILOSOPHY.md, docs/why.md, WHY.md]
+  - dependency: []
+  - meta: []
+
+default_weight: L1
+allows_raster: false
+allows_gif: false
+
+variants:
+  - id: stacked-claims
+    canvas: "1280x720"
+    hero: 项目名巨字压在一块撞色色块上，右侧竖排 3 条真实立场（"无构建步骤""单文件"），每条带粗删除线划掉的对立项
+  - id: sticker-pile
+    canvas: "1280x640"
+    hero: 2–4 张带硬投影的"贴纸"互相叠压、各自旋转，每张贴纸写一个真实事实；项目名是最大的那张
+  - id: receipt-diff
+    canvas: "1280x640"
+    hero: 一张"账单"：左栏列出项目**没有**的东西并划掉，底部合计行是项目名（只写可验证的事实，如真实依赖数）
+  - id: one-word
+    canvas: "1280x480"
+    hero: 只有一个词或一个符号（项目的核心立场）占满画布，项目名作为小号签名放在角落
+
+variation_limits:
+  font: [压缩无衬线, 等宽]
+  texture: [平涂, 网点]
+  palette_source: [品牌色, 单色 + 一点, 物件本色]
+
+tokens:
+  light:
+    bg: "#F5F1E8"             # 新闻纸
+    fg: "#0A0A0A"             # 对比度 ≈ 18:1
+    block: "{brand|#FFE14D}"  # 撞色色块
+    hot: "#FF3B1F"            # 删除线 / 印章
+    shadow: "#0A0A0A"
+  dark:
+    bg: "#121212"
+    fg: "#F5F1E8"
+    block: "{brand|#FFE14D}"  # 色块在深色里保持高饱和，文字改为深色
+    hot: "#FF5A3D"
+    shadow: "#F5F1E8"         # 深色版硬投影用浅色，像荧光贴纸
+  type:
+    display: 压缩粗体（Anton / Archivo Black / Bebas Neue；中文用站酷高端黑 / 思源黑体 Heavy），转路径
+    body: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+    scale: { title: 180, claim: 40, label: 24 }
+    rules:
+      - 标题全大写或全小写，二选一
+      - 允许单词被画布边缘裁掉一部分
+  shape:
+    radius: 0
+    border: 6
+    shadow_offset: "12px 12px，无模糊"
+
+composition:
+  hero:
+    canvas: "见 variants"
+    layout: 见 variants
+    motif: 粗黑描边、零模糊硬投影、删除线、手盖印章、箭头
+    content_rule: 每条"立场"必须能在 README / 源码中找到依据（例：零依赖 → package.json 无 dependencies）
+  section_header: 不做图；正文用粗体短句
+  diagram: 不画流程图；改用"之前 / 之后"的两段代码
+
+borrowable: [硬投影贴纸, 粗删除线, 撞色色块]
+
+tension:
+  - 音量对比：一个占满半屏的词与 24px 的等宽小字并置
+  - 倾斜：至少一个元素旋转 3–8°
+  - 裁切：标题或色块被画布边缘截断
+  - 否定即卖点：用划掉的对立项（webpack、config、node_modules）衬托项目立场
+
+motion:
+  default: false
+  allowed: [印章落下, 删除线划过]
+
+forbid:
+  - 圆角、渐变、柔和阴影
+  - 超过两种撞色
+  - 嘲讽具体的其他开源项目或作者（划掉的是"做法"，不是"人"或"项目名"）
+  - 没有依据的立场（"最快""最小"）
+  - 小字也用压缩粗体（正文必须易读）

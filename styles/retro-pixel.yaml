@@ -1,0 +1,95 @@
+# 风格卡：游戏型 · 像素复古
+id: retro-pixel
+name: 像素复古
+skeleton: poster              # 对应 skeletons/poster.md
+alt_skeletons: [terminal, bento]
+example: retro-pixel.example.svg
+summary: 8-bit / 16-bit 的有限色板与像素网格；适合游戏、模拟器、TUI、玩具型项目，把项目的真实元素画成像素精灵。
+
+fit:
+  strong: [game, tui]
+  ok: [cli, creative, consumer-app]
+  avoid: [research, sdk, infra]
+  needs: []
+signals:
+  - keyword: [game, retro, pixel, emulator, 8-bit, chip-8, nes, gameboy, roguelike, sprite, arcade, tui, toy, fun]
+  - file: [sprites/, tiles/, levels/, roms/, "*.aseprite", "*.tmx", "*.p8"]
+  - dependency: [pygame, love, pico-8, bevy, macroquad, raylib, phaser, ratatui, bubbletea, textual]
+  - meta: [has_screenshots]
+
+default_weight: L2            # hero + 像素章节条
+allows_raster: false          # 像素图用 SVG <rect> 精确绘制，不用生图（会糊边）
+allows_gif: false             # 动效用 SVG 逐帧（steps()）
+
+variants:
+  - id: title-screen
+    canvas: "1280x720"
+    hero: 游戏标题画面：像素字项目名居中偏上，下方闪烁 "PRESS START" 换成真实安装命令，底部是像素地面与 1 个精灵
+  - id: level-map
+    canvas: "1280x640"
+    hero: 俯视关卡地图：项目的真实流程或模块被画成关卡格子，路径连接，精灵站在"当前关"
+  - id: inventory
+    canvas: "1280x640"
+    hero: 物品栏界面：每个格子是一个真实功能，带像素图标与数量（数量只能是真实值，如子命令数）
+  - id: dialog-box
+    canvas: "1280x480"
+    hero: RPG 对话框：左侧精灵头像，右侧对话框里是项目一句话定位，右下角 ▼ 提示符
+
+variation_limits:
+  texture: [扫描线, 平涂]
+  font: [像素]   # 像素字不在全局字体轴中，固定使用
+
+tokens:
+  palette_rule: 从一套真实的复古色板挑 4–6 色（PICO-8 / NES / Game Boy DMG / Sweetie-16），全套只用这几色
+  light:                      # Game Boy DMG 四阶绿
+    bg: "#E0F0C8"
+    c1: "#A8C890"
+    c2: "#4E7A50"
+    fg: "#1B3022"             # 对比度 ≈ 12:1
+    accent: "{brand|#E0503C}"
+  dark:                       # PICO-8 夜景
+    bg: "#1D2B53"
+    c1: "#7E2553"
+    c2: "#29ADFF"
+    fg: "#FFF1E8"             # ≈ 12:1
+    accent: "{brand_lightened|#FFEC27}"
+  type:
+    display: 像素字（Press Start 2P / Silkscreen / 自绘 5×7 点阵；中文用 Zpix / 方正像素类），用 <rect> 绘制或转路径
+    body: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+    scale: { title: "像素块 16px × 7 行", subtitle: 28, label: 22 }
+    rules:
+      - 所有坐标对齐到像素单元（推荐 8px 或 16px）
+      - shape-rendering="crispEdges"
+  shape:
+    radius: 0
+    pixel: "8 或 16，全套统一"
+
+composition:
+  hero:
+    canvas: "见 variants"
+    layout: 见 variants
+    motif: 像素精灵（项目的真实对象：数据库→宝箱、请求→信使、包→道具）、HUD 状态栏、像素边框
+    content_rule: HUD 里的数字（等级、分数、HP）只能映射真实值（版本号、子命令数），不得编造
+  section_header:
+    canvas: "1280x160"
+    layout: 像素边框横条 + 像素字章节名
+  diagram: 关卡地图式流程，节点为真实步骤
+
+borrowable: [像素精灵, HUD 状态栏, 像素边框]
+
+tension:
+  - 网格纪律：所有元素严格落在像素网格上，没有一个半像素
+  - 尺度对比：一个放大 4× 的精灵与正常大小的 HUD 小字并置
+  - 有限色板：全图不超过 6 色，强调色只出现在一个精灵或一行字上
+  - 叙事：画面是一个"正在发生的瞬间"（拾取、过关、对话），不是静物摆拍
+
+motion:
+  default: false
+  allowed: [精灵 2–4 帧步进动画, 光标闪烁]
+
+forbid:
+  - 抗锯齿边缘、渐变、模糊
+  - 超过 6 种颜色
+  - 用系统字体假装像素字
+  - 与项目无关的经典游戏角色或其近似形象（版权）
+  - 虚构的分数、排名、玩家数

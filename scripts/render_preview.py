@@ -11,7 +11,10 @@ render_preview.py — 用 resvg 把 SVG 渲染成 PNG 预览，可选拼成"深�
     - --github 按 GitHub 实际显示宽度输出（桌面 830px + 移动 360px），用于自查可读性。
     - --mobile 额外输出 360px 宽版本，用于检查 hero 在手机上的可读性。
     - resvg 不执行 CSS 动画，输出的是静态帧；这与 GitHub 不播放动画时的效果一致。
-    - prefers-color-scheme 媒体查询在 resvg 中按浅色处理；深色版本请使用单独的 *-dark.svg。
+    - 渲染器不支持 CSS 变量与 prefers-color-scheme：脚本会先把 `:root{--x:…}` 变量内联成具体值
+      （深色取 `@media (prefers-color-scheme: dark){:root{…}}` 中的覆盖值），再交给渲染器。
+    - 单文件内含深色媒体查询的 SVG（如 styles/*.example.svg）默认额外输出 `<名称>@dark.png`；
+      用 --scheme light|dark|both 控制。
     - 如安装了 Pillow，会把同名的 *-light / *-dark 拼成一张 *-compare.png。
 
 依赖: resvg（CLI 或 resvg_py）；可选 Pillow。
@@ -19,6 +22,8 @@ render_preview.py — 用 resvg 把 SVG 渲染成 PNG 预览，可选拼成"深�
 from __future__ import annotations
 
 import argparse
+import re
+import tempfile
 import shutil
 import subprocess
 import sys
@@ -48,22 +53,69 @@ def run(cmd: list[str], svg: Path) -> bool:
     return True
 
 
-def render(svg: Path, png: Path, width: int, backend: str) -> bool:
+DARK_MEDIA_RE = re.compile(
+    r"@media\s*\(\s*prefers-color-scheme\s*:\s*dark\s*\)\s*\{((?:[^{}]*\{[^{}]*\})*[^{}]*)\}", re.S)
+ROOT_RE = re.compile(r":root\s*\{([^{}]*)\}", re.S)
+VAR_DEF_RE = re.compile(r"(--[\w-]+)\s*:\s*([^;}]+)")
+VAR_USE_RE = re.compile(r"var\(\s*(--[\w-]+)\s*(?:,\s*([^()]*))?\)")
+
+
+def has_dark_media(raw: str) -> bool:
+    return bool(DARK_MEDIA_RE.search(raw))
+
+
+def flatten_css(raw: str, scheme: str) -> str:
+    """把 CSS 变量内联为具体值，并移除深色媒体查询（渲染器不支持两者）。"""
+    dark_blocks = DARK_MEDIA_RE.findall(raw)
+    body = DARK_MEDIA_RE.sub("", raw)
+    values: dict[str, str] = {}
+    for block in ROOT_RE.findall(body):
+        values.update((k, v.strip()) for k, v in VAR_DEF_RE.findall(block))
+    if scheme == "dark":
+        for media in dark_blocks:
+            for block in ROOT_RE.findall(media):
+                values.update((k, v.strip()) for k, v in VAR_DEF_RE.findall(block))
+    if not values and not dark_blocks:
+        return raw
+    for _ in range(4):  # 变量可能引用变量
+        new = VAR_USE_RE.sub(lambda m: values.get(m.group(1), (m.group(2) or "").strip() or m.group(0)), body)
+        if new == body:
+            break
+        body = new
+    return body
+
+
+def render(svg: Path, png: Path, width: int, backend: str, scheme: str = "light") -> bool:
     png.parent.mkdir(parents=True, exist_ok=True)
+    raw = svg.read_text(encoding="utf-8", errors="ignore")
+    flat = flatten_css(raw, scheme)
+    if flat != raw:
+        with tempfile.NamedTemporaryFile("w", suffix=".svg", dir=svg.parent, delete=False,
+                                         encoding="utf-8") as tmp:
+            tmp.write(flat)
+        try:
+            return _render(Path(tmp.name), png, width, backend, svg)
+        finally:
+            Path(tmp.name).unlink(missing_ok=True)
+    return _render(svg, png, width, backend, svg)
+
+
+def _render(svg: Path, png: Path, width: int, backend: str, label: Path) -> bool:
+    svg_label = label
     if backend == "cli":
-        return run(["resvg", "--width", str(width), str(svg), str(png)], svg)
+        return run(["resvg", "--width", str(width), str(svg), str(png)], svg_label)
     if backend == "rsvg":
-        return run(["rsvg-convert", "-w", str(width), "-o", str(png), str(svg)], svg)
+        return run(["rsvg-convert", "-w", str(width), "-o", str(png), str(svg)], svg_label)
     if backend == "magick":
         return run(["magick", "-background", "none", "-density", "192", str(svg),
-                    "-resize", f"{width}x", str(png)], svg)
+                    "-resize", f"{width}x", str(png)], svg_label)
     import resvg_py  # type: ignore
     try:
         data = resvg_py.svg_to_bytes(svg_path=str(svg), width=width)
         png.write_bytes(bytes(data))
         return True
     except Exception as e:  # noqa: BLE001
-        print(f"  ✗ {svg.name}: {e}", file=sys.stderr)
+        print(f"  ✗ {svg_label.name}: {e}", file=sys.stderr)
         return False
 
 
@@ -99,6 +151,8 @@ def main() -> int:
     ap.add_argument("--width", type=int, default=1280)
     ap.add_argument("--mobile", action="store_true", help="额外输出 360px 宽版本")
     ap.add_argument("--github", action="store_true", help="额外输出 GitHub 桌面 830px 与移动 360px 版本")
+    ap.add_argument("--scheme", choices=["auto", "light", "dark", "both"], default="auto",
+                    help="单文件深浅色 SVG 的渲染方案；auto = 含深色媒体查询时两套都出")
     args = ap.parse_args()
 
     backend = find_backend()
@@ -118,28 +172,42 @@ def main() -> int:
     ok = 0
     rendered: dict[str, Path] = {}
     for svg in files:
-        png = args.out / (svg.stem + ".png")
-        if render(svg, png, args.width, backend):
-            ok += 1
-            rendered[svg.stem] = png
-            print(f"  ✓ {png}")
-        if args.github:
-            g = args.out / (svg.stem + "@github.png")
-            if render(svg, g, 830, backend):
-                print(f"  ✓ {g}")
-        if args.mobile:
-            m = args.out / (svg.stem + "@mobile.png")
-            if render(svg, m, 360, backend):
-                print(f"  ✓ {m}")
+        if args.scheme == "auto":
+            schemes = ["light", "dark"] if has_dark_media(svg.read_text(encoding="utf-8", errors="ignore")) \
+                else ["light"]
+        else:
+            schemes = ["light", "dark"] if args.scheme == "both" else [args.scheme]
+        file_ok = True
+        for scheme in schemes:
+            suffix = "@dark" if scheme == "dark" and len(schemes) > 1 else ""
+            stem = svg.stem + suffix
+            png = args.out / (stem + ".png")
+            if render(svg, png, args.width, backend, scheme):
+                rendered[stem] = png
+                print(f"  ✓ {png}")
+            else:
+                file_ok = False
+            if args.github:
+                g = args.out / (stem + "@github.png")
+                if render(svg, g, 830, backend, scheme):
+                    print(f"  ✓ {g}")
+            if args.mobile:
+                m = args.out / (stem + "@mobile.png")
+                if render(svg, m, 360, backend, scheme):
+                    print(f"  ✓ {m}")
+        ok += file_ok
 
     for stem, png in rendered.items():
+        pair = None
         if stem.endswith("-light"):
             base = stem[: -len("-light")]
-            dark = rendered.get(base + "-dark")
-            if dark:
-                out = args.out / f"{base}-compare.png"
-                if compose_compare(png, dark, out):
-                    print(f"  ✓ {out}（深浅色对比）")
+            pair = rendered.get(base + "-dark")
+        elif stem + "@dark" in rendered:
+            base, pair = stem, rendered[stem + "@dark"]
+        if pair:
+            out = args.out / f"{base}-compare.png"
+            if compose_compare(png, pair, out):
+                print(f"  ✓ {out}（深浅色对比）")
 
     print(f"\n渲染完成 {ok}/{len(files)}，输出目录：{args.out}")
     return 0 if ok == len(files) else 1

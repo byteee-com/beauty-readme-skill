@@ -4,7 +4,8 @@ description: >
   为 GitHub / Git 项目设计并重写 README：读取项目代码与素材，自动推荐最匹配的版式骨架与视觉风格，
   产出 GitHub 安全的 SVG 视觉资产（hero、章节标题、流程图）与可读的 Markdown 正文。
   当用户提到"美化 README""重做项目首页""给仓库做个 hero / banner""README 太丑/太乱"时使用。
-  支持三种方向模式：自动推荐（默认）、多方案对比、指定风格。
+  内置 9 张风格卡与 6 种骨架，风格与骨架可解耦组合，并通过变体 / 变奏轴 / 种子避免千篇一律。
+  支持四种方向模式：自动推荐（默认）、多方案对比、指定风格、再来一版。
 ---
 
 # Beauty README
@@ -13,7 +14,7 @@ description: >
 视觉身份放进 SVG，可读内容留在 Markdown。
 
 > 核心原则：多样性来自项目本身的差异，而不是随机换皮。
-> 风格 = **概念** × 版式骨架 × 视觉语言 × 视觉重量 × 配色来源 × 项目母题。
+> 风格 = **概念** × 版式骨架 × 视觉语言 × 变体 × 变奏轴 × 视觉重量 × 项目母题。
 >
 > 风格只决定"怎么画"，**概念决定"画什么"**。没有概念的风格化只会得到"干净但平庸"的结果：
 > 换个项目名同样成立的图，就是失败的图。
@@ -21,7 +22,7 @@ description: >
 固定流程（不可跳步）：
 
 ```
-读项目 → 事实表 → 找证据 → 定概念 → 选风格 → 出图 → 渲染 → 对照自查清单 → 至少改一轮 → 交付
+读项目 → 事实表 → 找证据 → 定概念 → 选风格 → 定变奏 → 出图 → 渲染 → 对照自查清单 → 至少改一轮 → 交付
 ```
 
 ---
@@ -59,11 +60,12 @@ description: >
 | **自动推荐（默认）** | 用户只说"美化一下" | 按 4.3 定概念、4.4 打分，选最高分组合，用一句话说明理由后直接产出 |
 | **多方案对比** | 用户说"给我几个方向 / 看看其他方案"；或前两名得分差 < 10% | 产出 3 张 hero 缩略稿（不同骨架，不只是换色），等用户选择后再继续 |
 | **指定风格** | 用户点名风格；或仓库已有品牌规范（logo 色、官网、`brand/` 目录） | 跳过打分，直接采用；品牌规范优先于风格卡配色 |
+| **再来一版** | 用户说"再来一版 / 换个感觉 / 不要这种" | 换 `--seed` 重新挑变体与变奏轴，至少换两条轴；"不要这种"用 `--exclude` 排除该风格卡 |
 
 自动推荐时，必须向用户说明理由，模板：
 
 > 这是一个 {项目类型}，核心卖点是 {卖点}。概念是「{一句话隐喻}」，首屏用 {真实证据} 做成 {物件}，
-> 用「{骨架} + {风格}」来画。
+> 用「{骨架} + {风格} · {变体}」来画。
 > 想换方向可以说"给我看看其他方案"。
 
 ---
@@ -165,13 +167,27 @@ python3 scripts/analyze_repo.py <repo-path> --json > /tmp/readme-signals.json
 
 脚本已给出初始分，Agent 可结合补读内容调整，但调整须在理由中说明。
 
+### 4.4.1 定变奏（必做，详见 `references/variation.md`）
+
+风格卡只给方向。选定风格后还要定下面四件事，避免每个项目都长成同一张图：
+
+1. **骨架**：默认用风格卡 `skeleton`；内容结构更适合时可换成 `alt_skeletons` 里的任一骨架（例：瑞士网格 + 论文骨架）。
+2. **变体**：从风格卡 `variants` 里选一种 hero 构图。按概念选；概念无偏好时用脚本 `variation.variant`。
+3. **变奏轴**：画布比例、构图锚点、配色来源、字体性格、质感、密度、深色诠释。脚本的 `variation.axes` 已遵守风格卡 `variation_limits`，作为平局时的起点。
+4. **混搭（可选）**：脚本给出 `variation.borrow` 时，可从第二名风格借**一个** `borrowable` 元素，用主风格配色重画。
+
+然后对照 `references/variation.md` 第 5 节的**反默认指纹**：命中 3 条以上就换掉至少两条再出图。
+最终写成一行**变奏签名**记入 DESIGN.md。
+
+多方案对比时直接用脚本的 `compare_set`：三套组合的风格卡和骨架都不同。
+
 ### 4.5 锁定设计规范
 
 选中后写一份规范（放在 `assets/readme/DESIGN.md`，便于后续迭代）：
 
 - **Concept**：一句话隐喻 + 标志性细节 + 落选候选及淘汰理由
 - **Evidence**：主视觉使用了哪些真实字段/输出，各自出处（文件:行）
-- 骨架（来自 `skeletons/`）
+- 骨架（来自 `skeletons/`）、变体与**变奏签名**（见 4.4.1）
 - 配色：背景 / 前景 / 强调色 / 辅助色，浅色与深色两套，正文对比度 ≥ 4.5:1
 - 深色版必须**重新诠释**概念（例：纸质票 → 夜间登机牌），而不是机械反色
 - 字体：标题字体、等宽字体、回退栈；优先使用有性格的开源字体并转路径
@@ -239,13 +255,23 @@ python3 scripts/render_preview.py assets/readme/ --out .readme-preview/ --github
 
 ## 6. 风格库
 
-| 风格卡 | 骨架 | 一句话 |
-|---|---|---|
-| `styles/terminal-neon.yaml` | `skeletons/terminal.md` | 首屏就是真实命令与输出，适合 CLI / 开发工具 |
-| `styles/swiss-grid.yaml` | `skeletons/document.md` | 克制、靠网格与排版，适合库 / 框架 / 基础设施 |
-| `styles/editorial-poster.yaml` | `skeletons/poster.md` | 大 hero、强构图，适合应用 / AI 产品 / 创作项目 |
+| 风格卡 | 默认骨架 | 兼容骨架 | 一句话 |
+|---|---|---|---|
+| `styles/terminal-neon.yaml` | terminal | manifesto, document | 首屏就是真实命令与输出，适合 CLI / 开发工具 |
+| `styles/swiss-grid.yaml` | document | poster, paper, bento | 克制、靠网格与排版，适合库 / 框架 / 基础设施 |
+| `styles/editorial-poster.yaml` | poster | bento, manifesto, document | 大 hero、强构图，适合应用 / AI 产品 / 创作项目 |
+| `styles/blueprint.yaml` | document | paper, bento | 工程图纸：尺寸线、剖面、标题栏，适合硬件 / 嵌入式 / 协议 / 基础设施 |
+| `styles/bento-grid.yaml` | bento | document, poster | 不等大格子装真实证据，适合多卖点的框架 / 平台 / SDK |
+| `styles/retro-pixel.yaml` | poster | terminal, bento | 有限色板像素画，适合游戏 / 模拟器 / TUI / 玩具项目 |
+| `styles/brutalist-zine.yaml` | manifesto | terminal, poster | 粗边框、硬投影、划掉的对立项，适合立场鲜明的"做减法"项目 |
+| `styles/academic-paper.yaml` | paper | document | 论文首页、Figure 与图注，适合研究代码 / 模型 / 数据集 |
+| `styles/risograph.yaml` | poster | manifesto, bento | 双色叠印、网点、套印错位，适合创作工具 / 字体 / 艺术 / 社区 |
 
-新增风格：复制任一风格卡，修改 `fit`、`tokens`、`composition`、`forbid`，并提供一张示例 SVG。主流程无需改动。
+骨架：`skeletons/document.md`、`terminal.md`、`poster.md`、`bento.md`、`manifesto.md`、`paper.md`。
+
+每张风格卡包含：`fit` / `signals`（打分）、`variants`（2–4 种 hero 构图）、`alt_skeletons`、`variation_limits`、`borrowable`、`tokens`、`tension`、`forbid`。
+
+新增风格：复制任一风格卡，修改上述字段，并提供一张示例 SVG（单文件内用 `@media (prefers-color-scheme: dark)` 写深色版）。主流程与脚本无需改动。
 
 ---
 
@@ -255,6 +281,7 @@ python3 scripts/render_preview.py assets/readme/ --out .readme-preview/ --github
 - `references/content-structure.md`：README 信息架构与文案规则
 - `references/native-markdown.md`：Mermaid、提示框、折叠、深浅色切换等原生能力
 - `references/motion.md`：是否加动效、SVG 动效规范、生成 GIF、演示 GIF
+- `references/variation.md`：变体、变奏轴、混搭、种子与反默认指纹（**选完风格后必读**）
 - `references/self-check.md`：渲染后自查清单（**交付前必读**）
 
 ---
@@ -262,7 +289,9 @@ python3 scripts/render_preview.py assets/readme/ --out .readme-preview/ --github
 ## 8. 反模式（禁止）
 
 - 每个项目都用同一种"大 hero + 01/02/03 编号章节"结构
-- 只换配色就当作"不同方向"
+- 只换配色就当作"不同方向"；"再来一版"只换颜色或字体
+- 总是用风格卡的第一个变体、总是用默认骨架
+- 命中反默认指纹 3 条以上（1280×640 + 左文右图 + 系统无衬线 + 单一蓝 / 绿强调色……）
 - 紫色渐变背景、每个标题前加 emoji 当图标
 - 虚构指标："10× faster"、"Trusted by 1000+ teams"
 - 把安装命令、配置表格做成图片

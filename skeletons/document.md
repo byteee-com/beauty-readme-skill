@@ -1,5 +1,5 @@
 <!--
-骨架：文档型（配合 styles/swiss-grid.yaml）
+骨架：文档型（默认配合 styles/swiss-grid.yaml、blueprint.yaml；也可被其他风格卡经 alt_skeletons 使用）
 特点：克制、规格书式；视觉重量 L1（字标 hero），架构复杂时 L2 加一张架构图；
      大量使用原生 Markdown 结构（导航行、表格、details、Mermaid）。
 使用：Agent 复制本模板，替换 {占位}，删除不适用的段落与所有注释。

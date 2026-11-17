@@ -1,5 +1,5 @@
 <!--
-骨架：终端型（配合 styles/terminal-neon.yaml）
+骨架：终端型（默认配合 styles/terminal-neon.yaml；也可被其他风格卡经 alt_skeletons 使用）
 特点：首屏即用法；视觉重量 L1；"开始"紧跟 hero。
 使用：Agent 复制本模板，替换 {占位}，删除不适用的段落与所有注释。
 -->

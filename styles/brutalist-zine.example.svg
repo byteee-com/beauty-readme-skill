@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720" role="img" aria-labelledby="title desc">
+  <title id="title">plainweb：没有构建步骤的 Web 框架</title>
+  <desc id="desc">示例 hero（新粗野宣言风格，stacked-claims 变体）。项目名巨字压在倾斜的黄色色块上，带零模糊硬投影；右侧卡片列出三项被划掉的做法与对应立场；左下角一枚红色印章，底部是一行真实用法。所有内容均为占位示例。</desc>
+  <style>
+    :root { --bg:#F5F1E8; --fg:#0A0A0A; --block:#FFE14D; --onblock:#0A0A0A; --hot:#FF3B1F; --shadow:#0A0A0A; --card:#FFFFFF; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg:#121212; --fg:#F5F1E8; --block:#FFE14D; --onblock:#0A0A0A; --hot:#FF5A3D; --shadow:#F5F1E8; --card:#1E1E1E; }
+    }
+    .bg { fill: var(--bg); }
+    .block { fill: var(--block); stroke: var(--onblock); stroke-width: 6; }
+    .shadow { fill: var(--shadow); }
+    .card { fill: var(--card); stroke: var(--fg); stroke-width: 6; }
+    .display { font-family: Anton, Impact, Helvetica, "Arial Black", "PingFang SC", sans-serif; }
+    .sans { font-family: -apple-system, "Segoe UI", "Noto Sans", "PingFang SC", sans-serif; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .title { fill: var(--onblock); font-size: 148px; font-weight: 900; letter-spacing: -2px; }
+    .sub { fill: var(--fg); font-size: 40px; font-weight: 800; }
+    .no { fill: var(--fg); font-size: 26px; opacity: .6; }
+    .yes { fill: var(--fg); font-size: 34px; font-weight: 800; }
+    .strike { stroke: var(--hot); stroke-width: 5; }
+    .label { fill: var(--fg); font-size: 24px; }
+    .stamp { fill: none; stroke: var(--hot); stroke-width: 5; }
+    .stamp-t { fill: var(--hot); font-size: 30px; font-weight: 900; letter-spacing: 2px; }
+  </style>
+
+  <rect class="bg" width="1280" height="720"/>
+
+  <!-- 色块 + 硬投影 -->
+  <g transform="rotate(-3 420 300)">
+    <rect class="shadow" x="68" y="128" width="740" height="320"/>
+    <rect class="block" x="52" y="112" width="740" height="320"/>
+    <text x="84" y="256" class="display title">PLAIN</text>
+    <text x="84" y="404" class="display title">WEB</text>
+  </g>
+  <text x="64" y="530" class="sans sub">没有构建步骤的 Web 框架。</text>
+
+  <!-- 立场卡片 -->
+  <g transform="rotate(4 1040 330)">
+    <rect class="shadow" x="884" y="104" width="340" height="440"/>
+    <rect class="card" x="868" y="88" width="340" height="440"/>
+    <g class="mono">
+      <text x="900" y="150" class="no" textLength="196" lengthAdjust="spacingAndGlyphs">npm run build</text>
+      <line x1="894" y1="141" x2="1102" y2="141" class="strike"/>
+      <text x="900" y="198" class="sans yes">保存即上线</text>
+      <text x="900" y="282" class="no" textLength="262" lengthAdjust="spacingAndGlyphs">webpack.config.js</text>
+      <line x1="894" y1="273" x2="1168" y2="273" class="strike"/>
+      <text x="900" y="330" class="sans yes">零配置</text>
+      <text x="900" y="414" class="no" textLength="196" lengthAdjust="spacingAndGlyphs">node_modules/</text>
+      <line x1="894" y1="405" x2="1102" y2="405" class="strike"/>
+      <text x="900" y="462" class="sans yes">零依赖</text>
+    </g>
+  </g>
+
+  <!-- 印章 -->
+  <g transform="translate(-40 -140) rotate(-10 700 600)">
+    <rect class="stamp" x="590" y="560" width="230" height="80"/>
+    <rect class="stamp" x="598" y="568" width="214" height="64" stroke-width="2"/>
+    <text x="705" y="611" class="sans stamp-t" text-anchor="middle">NO BUILD</text>
+  </g>
+
+  <!-- 真实用法 -->
+  <text x="64" y="656" class="mono label">&lt;script type="module" src="plain.js"&gt;&lt;/script&gt;</text>
+</svg>

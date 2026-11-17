@@ -1,0 +1,100 @@
+# 风格卡：模块型 · 便当格
+id: bento-grid
+name: 便当格
+skeleton: bento               # 对应 skeletons/bento.md
+alt_skeletons: [document, poster]
+example: bento-grid.example.svg
+summary: 把项目拆成大小不一的格子：每格装一条真实证据（代码、输出、支持平台、截图局部），用格子尺寸表达主次。
+
+fit:
+  strong: [framework, ai-product, consumer-app, sdk]
+  ok: [library, devtool, design-resource, cli]
+  avoid: [research, tui]
+  needs: []
+signals:
+  - keyword: [framework, platform, toolkit, integrations, plugins, adapters, runtime, edge, starter, full-stack, sdk]
+  - file: [examples/, packages/, apps/, plugins/, integrations/]
+  - dependency: [next, astro, hono, vite, turbo, nx, "@vercel/og"]
+  - meta: [has_screenshots, has_website]
+
+default_weight: L1            # 一张便当 hero；格子里已经承载了特性，正文不再做特性图
+allows_raster: false
+allows_gif: false
+
+variants:
+  - id: hero-cell
+    canvas: "1280x720"
+    hero: 一个占 50% 面积的主格放项目名与定位，其余 4–5 个格子围绕它，每格一条真实证据
+  - id: code-anchor
+    canvas: "1280x720"
+    hero: 最大的格子是一段 ≤ 8 行的真实最小示例代码，项目名缩小到左上角小格
+  - id: strip
+    canvas: "1280x480"
+    hero: 单行横向便当：5–6 个高度相同、宽度不同的格子，宽度对应重要程度
+  - id: mosaic-offset
+    canvas: "1280x800"
+    hero: 非对齐马赛克：格子按 6 列网格错位排列，其中一格旋转 3° 或溢出画布，打破整齐感
+
+variation_limits:
+  font: [新怪诞无衬线, 圆体]
+  texture: [平涂, 颗粒, 无]
+
+tokens:
+  derive:
+    base: 项目主色的极浅或极深变体作为画布色；格子用画布色 ±4% 明度
+    accent: 主色本身，只填满 1 个格子
+  fallback_light:
+    bg: "#EEF0EA"
+    cell: "#FFFFFF"
+    cell_alt: "#E2E6DA"
+    fg: "#16181A"
+    muted: "#55606A"
+    accent: "#1F6FEB"
+    on_accent: "#FFFFFF"
+  fallback_dark:
+    bg: "#121412"
+    cell: "#1C1F1C"
+    cell_alt: "#262A25"
+    fg: "#EEF1EA"
+    muted: "#A2AAA0"
+    accent: "#7DB4FF"
+    on_accent: "#0B1220"
+  type:
+    display: 几何或圆润无衬线（General Sans / Satoshi / Manrope / 思源黑体 Bold），转路径
+    mono: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+    scale: { title: 104, cell_title: 34, body: 24, caption: 22 }
+  shape:
+    radius: "20–28，全套统一"
+    gap: 16
+    stroke: 0
+
+composition:
+  hero:
+    canvas: "见 variants"
+    layout: 见 variants
+    cell_rules:
+      - 每个格子只讲一件事：一段代码、一条命令、一组支持平台、一个截图局部
+      - 格子标题 ≤ 6 个字；正文 ≤ 2 行
+      - 至少一个格子是"真实证据"（代码 / 输出 / 截图），不能全是文字口号
+    motif: 格子之间统一间距；一个格子用强调色填满
+  section_header: 不做图
+  showcase: 正文的功能区用 2 列 <table> 延续便当节奏
+
+borrowable: [不等大格子分区, 强调色满格]
+
+tension:
+  - 尺寸即层级：最大格与最小格面积比 ≥ 6:1
+  - 单格出界：一个格子溢出画布或与相邻格叠压
+  - 质感对比：一格是密集代码，相邻一格只有一个巨大字符或数字
+  - 满格强调：强调色只填满一个格子，其他格全部中性
+
+motion:
+  default: false
+  allowed: [格子依次淡入（≤ 1.2s 完成）]
+
+forbid:
+  - 所有格子等大（变成普通卡片网格）
+  - 每格配一个线性图标 + 一句口号的 SaaS 落地页套路
+  - 虚构指标格（"99.9% uptime"、"10k+ users"）
+  - 玻璃拟态、紫色渐变、多重阴影
+  - 超过 7 个格子

@@ -72,6 +72,7 @@ The storyboard uses the [analyzer's recommendation](scripts/analyze_repo.py#L418
 | :-- | :-- | :-- |
 | **Automatic recommendation** | Improve this README | Reads the project, scores styles, explains the choice, and starts the redesign |
 | **Compare options** | Show me a few directions | Creates three cover thumbnails with distinct layouts for you to choose from |
+| **Another take** | Try another version / not this style | Reseeds the variant and variation picks, or excludes the current style |
 | **Specify a style** | Use the terminal style | Uses your chosen style and follows any existing brand guidelines |
 
 <details open>
@@ -99,6 +100,14 @@ You can also request section headers or a workflow diagram.
 | **Swiss Grid** | A documentation layout organized by grid and type weight | Libraries, frameworks, SDKs, and infrastructure | [mylib](styles/swiss-grid.example.svg) |
 | **Terminal Neon** | A terminal-first layout that opens with a command and its output | CLI tools, developer tools, and TUIs | [mytool](styles/terminal-neon.example.svg) |
 | **Editorial Poster** | A large cover that features a screenshot or a visual motif from the project | Apps, AI products, creative projects, and games | [Tidemap](styles/editorial-poster.example.svg) |
+| **Blueprint** | A documentation layout drawn as an engineering sheet with dimension lines, sections, and a title block | Hardware, embedded, protocols, and infrastructure | [fluxbus](styles/blueprint.example.svg) |
+| **Bento Grid** | A bento layout of unequal cells, each holding one piece of real evidence | Frameworks, platforms, SDKs, and AI products | [kite](styles/bento-grid.example.svg) |
+| **Retro Pixel** | A poster layout in pixel art with a limited palette | Games, emulators, TUIs, and toy projects | [picoquest](styles/retro-pixel.example.svg) |
+| **Brutalist Zine** | A manifesto layout with heavy borders, hard shadows, and struck-out alternatives | Opinionated tools such as zero-dependency or no-build projects | [plainweb](styles/brutalist-zine.example.svg) |
+| **Academic Paper** | A paper layout with a title page, a figure, and a caption | Research code, models, and datasets | [SparseKV](styles/academic-paper.example.svg) |
+| **Risograph** | A poster layout with two-ink overprints, halftones, and misregistration | Creative tools, typefaces, art, and community projects | [Loomtype](styles/risograph.example.svg) |
+
+Styles and layouts combine freely. Each style card lists compatible layouts, two to four cover variants, and elements other styles can borrow. The analyzer derives a seed from the repository name to choose among equally suitable variants, typefaces, textures, and palette sources, so similar projects don't end up with the same cover. Asking for another take picks a new seed. See [the variation system](references/variation.md).
 
 The skill develops a visual concept from the project's existing materials and uses it to guide the layout, palette, and balance of text and graphics. This page's cover uses the registration marks and grid of a layout proof. Its `swiss-grid` label comes from the analysis run before the redesign.
 
@@ -112,16 +121,16 @@ python3 scripts/analyze_repo.py . --json
 
 | Script | Purpose | Common options |
 | :-- | :-- | :-- |
-| [analyze_repo.py](scripts/analyze_repo.py) | Reads project signals and recommends a style | `--json` for structured output |
+| [analyze_repo.py](scripts/analyze_repo.py) | Reads project signals and recommends a style and variation | `--json` for structured output, `--seed` for another take, `--exclude` to drop a style |
 | [lint_svg.py](scripts/lint_svg.py) | Checks GitHub compatibility and text size at the intended display width | `--display-width 830` |
-| [render_preview.py](scripts/render_preview.py) | Renders desktop and mobile PNG previews from SVGs | `--github` generates 830 px and 360 px versions |
+| [render_preview.py](scripts/render_preview.py) | Renders desktop and mobile PNG previews from SVGs | `--github` generates 830 px and 360 px versions, `--scheme` picks light or dark |
 | [text_to_path.py](scripts/text_to_path.py) | Converts text to SVG paths so the artwork renders consistently across systems | `--font` selects a font, and `--font-map` maps multiple fonts |
 | [demo_storyboard.py](scripts/demo_storyboard.py) | Creates light and dark SVG animations and GIFs from a storyboard | `extract` collects prompts, and `build --gif` generates the demos |
 
 <details>
 <summary>Optional dependencies</summary>
 
-- Install FontTools and PyYAML with `python3 -m pip install fonttools pyyaml` to convert text to paths and read YAML style cards.
+- Install FontTools with `python3 -m pip install fonttools` to convert text to paths. Style cards load without PyYAML, though it's used when installed.
 - Install `resvg` with `brew install resvg` to render previews. The script also supports `resvg-py`, `rsvg-convert`, and `magick`.
 - Install Pillow with `python3 -m pip install pillow` to combine light and dark previews into a comparison image.
 - Install `tomli` on Python 3.9 or 3.10 to parse TOML. Python 3.11 and later can parse it directly.
@@ -136,20 +145,20 @@ If the tools are unavailable, the agent can still review the project manually an
 | Path | Contents |
 | :-- | :-- |
 | [SKILL.md](SKILL.md) | Usage modes, design workflow, and delivery rules |
-| [references/](references/) | [GitHub rendering constraints](references/github-constraints.md), [content structure](references/content-structure.md), [native Markdown](references/native-markdown.md), [motion](references/motion.md), and the [review checklist](references/self-check.md) |
+| [references/](references/) | [GitHub rendering constraints](references/github-constraints.md), [content structure](references/content-structure.md), [native Markdown](references/native-markdown.md), [motion](references/motion.md), the [variation system](references/variation.md), and the [review checklist](references/self-check.md) |
 | [styles/](styles/) | Style cards and example covers |
-| [skeletons/](skeletons/) | Documentation, terminal, and poster layouts |
+| [skeletons/](skeletons/) | Documentation, terminal, poster, bento, manifesto, and paper layouts |
 | [scripts/](scripts/) | Analysis, validation, rendering, text outlining, and demo generation |
 | [assets/readme/](assets/readme/) | Covers, storyboards, and [design notes](assets/readme/DESIGN.md) |
 
 <details>
 <summary>Add a style</summary>
 
-1. Copy a YAML file from `styles/` and update `id`, `fit`, `signals`, `tokens`, `composition`, and `forbid`.
+1. Copy a YAML file from `styles/` and update `id`, `fit`, `signals`, `variants`, `alt_skeletons`, `borrowable`, `tokens`, `composition`, and `forbid`.
 2. Add an `<id>.example.svg` preview. If the style needs a new layout, add one to `skeletons/` and update the style card's `skeleton` field.
 3. Register the style in the [style library in SKILL.md](SKILL.md#6-风格库).
 
-With PyYAML installed, the analyzer loads new style cards. Otherwise, it uses the three built-in styles.
+The analyzer loads new style cards automatically, with or without PyYAML.
 
 </details>
 

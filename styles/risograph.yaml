@@ -1,0 +1,93 @@
+# 风格卡：印刷型 · 孔版印刷
+id: risograph
+name: 孔版印刷
+skeleton: poster              # 对应 skeletons/poster.md
+alt_skeletons: [manifesto, bento]
+example: risograph.example.svg
+summary: 两到三种专色叠印、套印错位、网点颗粒；像独立出版物和社区海报，适合创作工具、字体、艺术与社区项目。
+
+fit:
+  strong: [creative, design-resource]
+  ok: [game, consumer-app, ai-product, research]
+  avoid: [infra, sdk]
+  needs: []
+signals:
+  - keyword: [art, music, zine, community, font, typeface, poster, illustration, generative, print, drawing, palette, shader, creative coding]
+  - file: [fonts/, sketches/, gallery/, artwork/, "*.otf", "*.ttf", "*.glsl"]
+  - dependency: [p5, processing, three, paper, canvas-sketch, tone, opentype.js, fonttools]
+  - meta: [has_screenshots]
+
+default_weight: L2
+allows_raster: true           # 有生图能力时可做颗粒材质；纯 SVG 用网点 pattern 兜底
+allows_gif: false
+
+variants:
+  - id: overprint-letter
+    canvas: "1280x720"
+    hero: 两个巨大的字形或形状用两种专色叠印（multiply），重叠处产生第三色；项目名与定位压在一侧
+  - id: halftone-subject
+    canvas: "1280x720"
+    hero: 项目的真实作品或母题做成单色网点图，第二专色只印标题和一个形状，故意错位 4–8px
+  - id: gig-poster
+    canvas: "1280x800"
+    hero: 演出海报式：顶部大标题，中部母题，底部一排"演出信息"写真实事实（平台 / 许可证 / 安装命令）
+  - id: two-up
+    canvas: "1280x480"
+    hero: 横幅一分为二：左半一种专色满版，右半另一种专色满版，项目名横跨中缝，在中缝处叠出第三色
+
+variation_limits:
+  font: [衬线, 压缩无衬线, 圆体, "中文宋 / 黑 / 楷"]
+  texture: [网点, 颗粒, 套印错位]
+  palette_source: [物件本色, 品牌色]
+
+tokens:
+  palette_rule: "从真实 Riso 油墨挑 2–3 色（Fluorescent Pink #FF48B0、Blue #0078BF、Yellow #FFE800、Teal #00838A、Orange #FF6C2F、Green #00A95C），叠印用 mix-blend-mode:multiply"
+  light:
+    paper: "#F7F3EA"
+    ink_1: "{brand|#0078BF}"
+    ink_2: "#FF48B0"
+    fg: "#1E1E3A"             # 正文用两墨叠印后的深色，对比度 ≈ 14:1
+  dark:                       # 黑卡纸 + 荧光油墨
+    paper: "#17161C"
+    ink_1: "{brand_lightened|#4DB5FF}"
+    ink_2: "#FF6FC4"
+    fg: "#F7F3EA"
+    blend: screen             # 深色版叠印改为 screen，像荧光油墨
+  type:
+    display: 有手作感的展示字体（Instrument Serif / Gloock / Bricolage Grotesque / Climate Crisis；中文用思源宋体 Heavy / 霞鹜文楷），转路径
+    body: "-apple-system, 'Segoe UI', 'Noto Sans', 'PingFang SC', sans-serif"
+    scale: { title: 150, subtitle: 34, label: 22 }
+  shape:
+    radius: "0 或 999（全圆），全套统一"
+    halftone: "点距 8–12px 的圆点 pattern"
+    misregistration: "4–8px，只在一个墨层上"
+
+composition:
+  hero:
+    canvas: "见 variants"
+    layout: 见 variants
+    motif: 叠印第三色、网点、套印错位、裁切十字、色版标记（"PINK / BLUE"）
+    content_rule: 作品图只用项目真实产出（生成图、字体样张、截图）或项目母题几何
+  section_header:
+    canvas: "1280x200"
+    layout: 单墨色满版条 + 另一墨色的章节名，错位 4px
+  showcase: 作品墙用 3 列 <table>，每张图下标真实作品名
+
+borrowable: [套印错位, 叠印第三色, 网点 pattern]
+
+tension:
+  - 叠印：至少一处两墨重叠产生第三色
+  - 错位：一个墨层整体偏移 4–8px，让"印刷"可信
+  - 尺度对比：一个超大字形或形状 vs 22px 色版标记小字
+  - 限色：全图只用 2–3 种墨 + 纸色
+
+motion:
+  default: false
+  allowed: [第二墨层滑入套准]
+
+forbid:
+  - 超过 3 种墨色
+  - 渐变（网点代替渐变）
+  - 柔和投影、玻璃拟态
+  - 与项目无关的库存插画
+  - 文字本身被错位到难以阅读（错位只给装饰层和标题描边）

@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720" role="img" aria-labelledby="title desc">
+  <title id="title">kite：一次编写，部署到任意边缘运行时的路由框架</title>
+  <desc id="desc">示例 hero（便当格风格，hero-cell 变体）。左上主格为项目名与定位；右侧格为一段最小示例代码；下排依次为强调色满格的文件即路由目录树、支持的运行时、安装命令。所有内容均为占位示例。</desc>
+  <style>
+    :root { --bg:#EEF0EA; --cell:#FFFFFF; --alt:#E2E6DA; --fg:#16181A; --muted:#55606A; --accent:#1F6FEB; --on:#FFFFFF; --code:#16181A; --codefg:#E9ECE4; --kw:#8FB8FF; --str:#B8E08A; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg:#121412; --cell:#1C1F1C; --alt:#262A25; --fg:#EEF1EA; --muted:#A2AAA0; --accent:#7DB4FF; --on:#0B1220; --code:#0A0B0A; --codefg:#E9ECE4; --kw:#8FB8FF; --str:#B8E08A; }
+    }
+    .bg { fill: var(--bg); }
+    .cell { fill: var(--cell); }
+    .alt { fill: var(--alt); }
+    .code { fill: var(--code); }
+    .acc { fill: var(--accent); }
+    .sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", "PingFang SC", sans-serif; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+    .title { fill: var(--fg); font-size: 168px; font-weight: 800; letter-spacing: -8px; }
+    .sub { fill: var(--fg); font-size: 34px; font-weight: 500; }
+    .kicker { fill: var(--muted); font-size: 22px; font-weight: 600; letter-spacing: 1px; }
+    .ctitle { fill: var(--fg); font-size: 30px; font-weight: 700; }
+    .ctitle-on { fill: var(--on); font-size: 30px; font-weight: 700; }
+    .body { fill: var(--fg); font-size: 24px; }
+    .muted { fill: var(--muted); font-size: 22px; }
+    .tree { fill: var(--on); font-size: 22px; }
+    .c { fill: var(--codefg); font-size: 23px; }
+    .c-dim { fill: #8A938A; font-size: 23px; }
+    .kw { fill: var(--kw); }
+    .str { fill: var(--str); }
+    .pill { fill: none; stroke: var(--fg); stroke-width: 2; }
+    .cmd { fill: var(--fg); font-size: 32px; font-weight: 700; }
+  </style>
+
+  <rect class="bg" width="1280" height="720"/>
+
+  <!-- A 主格 -->
+  <rect class="cell" x="32" y="32" width="744" height="420" rx="24"/>
+  <text x="72" y="92" class="sans kicker">EDGE ROUTER FRAMEWORK</text>
+  <text x="60" y="270" class="sans title">kite</text>
+  <text x="72" y="344" class="sans sub">一次编写路由，</text>
+  <text x="72" y="392" class="sans sub">部署到任意边缘运行时。</text>
+
+  <!-- B 代码格 -->
+  <rect class="code" x="792" y="32" width="456" height="420" rx="24"/>
+  <g class="mono">
+    <text x="824" y="88" class="c-dim">// routes/hi/[name].ts</text>
+    <text x="824" y="140" class="c"><tspan class="kw">import</tspan> { route } <tspan class="kw">from</tspan> <tspan class="str">"kite"</tspan></text>
+    <text x="824" y="196" class="c"><tspan class="kw">export default</tspan> route(</text>
+    <text x="852" y="236" class="c">({ params }) =&gt;</text>
+    <text x="880" y="276" class="c"><tspan class="str">`hello ${params.name}`</tspan></text>
+    <text x="824" y="316" class="c">)</text>
+    <text x="824" y="404" class="c-dim">$ kite dev  →  :8787</text>
+  </g>
+
+  <!-- C 强调色满格：文件即路由 -->
+  <rect class="acc" x="32" y="468" width="232" height="220" rx="24"/>
+  <text x="56" y="516" class="sans ctitle-on">文件即路由</text>
+  <g class="mono">
+    <text x="56" y="566" class="tree">routes/</text>
+    <text x="56" y="602" class="tree">├ index.ts</text>
+    <text x="56" y="638" class="tree">└ hi/[name].ts</text>
+  </g>
+
+  <!-- D 运行时 -->
+  <rect class="alt" x="280" y="468" width="496" height="220" rx="24"/>
+  <text x="312" y="516" class="sans ctitle">同一份代码，四种运行时</text>
+  <g class="mono">
+    <rect class="pill" x="312" y="548" width="200" height="52" rx="26"/>
+    <text x="412" y="582" class="body" text-anchor="middle">Node</text>
+    <rect class="pill" x="528" y="548" width="216" height="52" rx="26"/>
+    <text x="636" y="582" class="body" text-anchor="middle">Deno</text>
+    <rect class="pill" x="312" y="612" width="200" height="52" rx="26"/>
+    <text x="412" y="646" class="body" text-anchor="middle">Bun</text>
+    <rect class="pill" x="528" y="612" width="216" height="52" rx="26"/>
+    <text x="636" y="646" class="body" text-anchor="middle">Workers</text>
+  </g>
+
+  <!-- E 安装 -->
+  <rect class="cell" x="792" y="468" width="456" height="220" rx="24"/>
+  <text x="824" y="516" class="sans ctitle">安装</text>
+  <text x="824" y="590" class="mono cmd">npm i kite</text>
+  <text x="824" y="652" class="sans muted">TypeScript · MIT</text>
+</svg>

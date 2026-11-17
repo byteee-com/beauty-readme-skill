@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720" role="img" aria-labelledby="title desc">
+  <title id="title">SparseKV：长上下文推理的稀疏键值缓存</title>
+  <desc id="desc">示例 hero（学术论文风格，title-page 变体）。论文首页局部：左侧竖排预印本编号条，衬线标题、作者占位与摘要框；右侧 Figure 1 对比稠密缓存与稀疏缓存的示意图，并附图注。页面被画布底部裁切。作者、编号与内容均为占位示例，示意图不含数值。</desc>
+  <style>
+    :root { --bg:#E9E6DF; --paper:#FBFAF7; --fg:#1A1A1A; --muted:#5A5A5A; --rule:#1A1A1A; --accent:#B3261E; --support:#2F5D8A; --faint:#D9D5CC; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg:#111214; --paper:#1B1C1E; --fg:#EDEAE3; --muted:#A8A49C; --rule:#EDEAE3; --accent:#FF8A7A; --support:#8DB6E0; --faint:#34363A; }
+    }
+    .bg { fill: var(--bg); }
+    .paper { fill: var(--paper); }
+    .serif { font-family: "Iowan Old Style", Georgia, "Songti SC", "Noto Serif CJK SC", serif; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .title { fill: var(--fg); font-size: 50px; font-weight: 700; }
+    .author { fill: var(--fg); font-size: 26px; }
+    .aff { fill: var(--muted); font-size: 22px; }
+    .h { fill: var(--fg); font-size: 24px; font-weight: 700; }
+    .abs { fill: var(--fg); font-size: 23px; }
+    .cap { fill: var(--fg); font-size: 22px; }
+    .sub { fill: var(--muted); font-size: 22px; }
+    .side { fill: var(--muted); font-size: 22px; letter-spacing: 2px; }
+    .rule { stroke: var(--rule); stroke-width: 1.5; fill: none; }
+    .dense { fill: var(--support); }
+    .kept { fill: var(--accent); }
+    .evict { fill: var(--faint); }
+    .arrow { stroke: var(--muted); stroke-width: 2; fill: none; }
+  </style>
+
+  <rect class="bg" width="1280" height="720"/>
+  <!-- 纸面：底部出血 -->
+  <rect class="paper" x="64" y="40" width="1152" height="700"/>
+
+  <!-- 预印本编号条 -->
+  <g transform="translate(72 738) rotate(-90)">
+    <text x="48" y="44" class="mono side" data-decorative="true">preprint · arXiv:{编号} [cs.LG]</text>
+  </g>
+  <line x1="136" y1="80" x2="136" y2="700" class="rule" opacity=".3"/>
+
+  <!-- 标题与作者 -->
+  <g class="serif">
+    <text x="176" y="134" class="title">SparseKV: Sparse Key–Value Caching</text>
+    <text x="176" y="196" class="title">for Long-Context Inference</text>
+    <text x="176" y="258" class="author">{作者 A}<tspan baseline-shift="super" font-size="16" data-decorative="true">1</tspan>  ·  {作者 B}<tspan baseline-shift="super" font-size="16" data-decorative="true">2</tspan>  ·  {作者 C}<tspan baseline-shift="super" font-size="16" data-decorative="true">1</tspan></text>
+    <text x="176" y="292" class="aff">1 {机构 1}   2 {机构 2}</text>
+  </g>
+
+  <!-- 摘要框 -->
+  <g class="serif">
+    <line x1="176" y1="332" x2="620" y2="332" class="rule"/>
+    <text x="398" y="370" class="h" text-anchor="middle">Abstract</text>
+    <text x="176" y="414" class="abs">长上下文推理中，KV 缓存随序列长度</text>
+    <text x="176" y="450" class="abs">线性增长，成为显存与带宽的瓶颈。</text>
+    <text x="176" y="486" class="abs">我们提出 SparseKV：在每一层只保留</text>
+    <text x="176" y="522" class="abs">对后续注意力贡献最大的键值对，</text>
+    <text x="176" y="558" class="abs">无需重新训练即可接入现有模型。</text>
+    <line x1="176" y1="590" x2="620" y2="590" class="rule"/>
+  </g>
+
+  <!-- Figure 1 -->
+  <g>
+    <text x="680" y="370" class="serif sub">(a) 稠密缓存</text>
+    <text x="1180" y="370" class="mono sub" text-anchor="end">layer ↓  token →</text>
+    <rect class="dense" x="680" y="388" width="18" height="18"/>
+    <rect class="dense" x="704" y="388" width="18" height="18"/>
+    <rect class="dense" x="728" y="388" width="18" height="18"/>
+    <rect class="dense" x="752" y="388" width="18" height="18"/>
+    <rect class="dense" x="776" y="388" width="18" height="18"/>
+    <rect class="dense" x="800" y="388" width="18" height="18"/>
+    <rect class="dense" x="824" y="388" width="18" height="18"/>
+    <rect class="dense" x="848" y="388" width="18" height="18"/>
+    <rect class="dense" x="872" y="388" width="18" height="18"/>
+    <rect class="dense" x="896" y="388" width="18" height="18"/>
+    <rect class="dense" x="680" y="412" width="18" height="18"/>
+    <rect class="dense" x="704" y="412" width="18" height="18"/>
+    <rect class="dense" x="728" y="412" width="18" height="18"/>
+    <rect class="dense" x="752" y="412" width="18" height="18"/>
+    <rect class="dense" x="776" y="412" width="18" height="18"/>
+    <rect class="dense" x="800" y="412" width="18" height="18"/>
+    <rect class="dense" x="824" y="412" width="18" height="18"/>
+    <rect class="dense" x="848" y="412" width="18" height="18"/>
+    <rect class="dense" x="872" y="412" width="18" height="18"/>
+    <rect class="dense" x="896" y="412" width="18" height="18"/>
+    <rect class="dense" x="680" y="436" width="18" height="18"/>
+    <rect class="dense" x="704" y="436" width="18" height="18"/>
+    <rect class="dense" x="728" y="436" width="18" height="18"/>
+    <rect class="dense" x="752" y="436" width="18" height="18"/>
+    <rect class="dense" x="776" y="436" width="18" height="18"/>
+    <rect class="dense" x="800" y="436" width="18" height="18"/>
+    <rect class="dense" x="824" y="436" width="18" height="18"/>
+    <rect class="dense" x="848" y="436" width="18" height="18"/>
+    <rect class="dense" x="872" y="436" width="18" height="18"/>
+    <rect class="dense" x="896" y="436" width="18" height="18"/>
+    <rect class="dense" x="680" y="460" width="18" height="18"/>
+    <rect class="dense" x="704" y="460" width="18" height="18"/>
+    <rect class="dense" x="728" y="460" width="18" height="18"/>
+    <rect class="dense" x="752" y="460" width="18" height="18"/>
+    <rect class="dense" x="776" y="460" width="18" height="18"/>
+    <rect class="dense" x="800" y="460" width="18" height="18"/>
+    <rect class="dense" x="824" y="460" width="18" height="18"/>
+    <rect class="dense" x="848" y="460" width="18" height="18"/>
+    <rect class="dense" x="872" y="460" width="18" height="18"/>
+    <rect class="dense" x="896" y="460" width="18" height="18"/>
+    <path d="M797 490 v28" class="arrow"/>
+    <path d="M789 508 l8 10 l8 -10" class="arrow"/>
+    <text x="680" y="552" class="serif sub">(b) SparseKV</text>
+    <rect class="kept" x="680" y="570" width="18" height="18"/>
+    <rect class="evict" x="704" y="570" width="18" height="18"/>
+    <rect class="kept" x="728" y="570" width="18" height="18"/>
+    <rect class="kept" x="752" y="570" width="18" height="18"/>
+    <rect class="evict" x="776" y="570" width="18" height="18"/>
+    <rect class="evict" x="800" y="570" width="18" height="18"/>
+    <rect class="evict" x="824" y="570" width="18" height="18"/>
+    <rect class="evict" x="848" y="570" width="18" height="18"/>
+    <rect class="kept" x="872" y="570" width="18" height="18"/>
+    <rect class="kept" x="896" y="570" width="18" height="18"/>
+    <rect class="kept" x="680" y="594" width="18" height="18"/>
+    <rect class="kept" x="704" y="594" width="18" height="18"/>
+    <rect class="evict" x="728" y="594" width="18" height="18"/>
+    <rect class="evict" x="752" y="594" width="18" height="18"/>
+    <rect class="evict" x="776" y="594" width="18" height="18"/>
+    <rect class="kept" x="800" y="594" width="18" height="18"/>
+    <rect class="evict" x="824" y="594" width="18" height="18"/>
+    <rect class="kept" x="848" y="594" width="18" height="18"/>
+    <rect class="evict" x="872" y="594" width="18" height="18"/>
+    <rect class="kept" x="896" y="594" width="18" height="18"/>
+    <rect class="kept" x="680" y="618" width="18" height="18"/>
+    <rect class="evict" x="704" y="618" width="18" height="18"/>
+    <rect class="evict" x="728" y="618" width="18" height="18"/>
+    <rect class="evict" x="752" y="618" width="18" height="18"/>
+    <rect class="evict" x="776" y="618" width="18" height="18"/>
+    <rect class="evict" x="800" y="618" width="18" height="18"/>
+    <rect class="evict" x="824" y="618" width="18" height="18"/>
+    <rect class="kept" x="848" y="618" width="18" height="18"/>
+    <rect class="evict" x="872" y="618" width="18" height="18"/>
+    <rect class="kept" x="896" y="618" width="18" height="18"/>
+    <rect class="kept" x="680" y="642" width="18" height="18"/>
+    <rect class="evict" x="704" y="642" width="18" height="18"/>
+    <rect class="evict" x="728" y="642" width="18" height="18"/>
+    <rect class="kept" x="752" y="642" width="18" height="18"/>
+    <rect class="kept" x="776" y="642" width="18" height="18"/>
+    <rect class="evict" x="800" y="642" width="18" height="18"/>
+    <rect class="evict" x="824" y="642" width="18" height="18"/>
+    <rect class="evict" x="848" y="642" width="18" height="18"/>
+    <rect class="kept" x="872" y="642" width="18" height="18"/>
+    <rect class="kept" x="896" y="642" width="18" height="18"/>
+  </g>
+  <text x="680" y="694" class="serif cap"><tspan font-weight="700">Figure 1.</tspan> 示意：每层仅保留高贡献键值对（红）。</text>
+</svg>

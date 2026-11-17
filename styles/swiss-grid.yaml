@@ -45,10 +45,32 @@ tokens:
     stroke: 2
     grid: "12 列；外边距 64；列间距 24"
 
+alt_skeletons: [poster, paper, bento]   # 兼容骨架，见 references/variation.md
+
+variants:                     # hero 构图变体；按概念挑选，平局时由种子决定
+  - id: wordmark-rule
+    canvas: "1280x480"
+    hero: 大号项目名左对齐占据上 60%；下方一条粗分隔线，分隔线下按网格排 3–4 个元数据栏
+  - id: spec-sheet
+    canvas: "1280x640"
+    hero: 规格表：左侧 1/4 窄栏放项目名与定位，右侧 3/4 是一张真实 API 签名或配置项的表格，单一强调色标出最关键的一行
+  - id: index-column
+    canvas: "1280x640"
+    hero: 一个超大首字母或编号占据左半并出血裁切，右侧窄栏按网格排项目名、定位与 3 条真实事实
+  - id: type-poster
+    canvas: "1280x720"
+    hero: 纯字体海报：项目名拆成两行巨字并撞出画布右缘，网格线全部可见，除一枚强调色方块外不加任何元素
+
+variation_limits:
+  font: [新怪诞无衬线, 压缩无衬线, "中文宋 / 黑 / 楷"]
+  texture: [平涂, 无]
+
+borrowable: [可见网格与标尺, 真实值元数据栏]
+
 composition:
   hero:
-    canvas: "1280x480"
-    layout: 大号项目名左对齐占据上 60%；下方一条粗分隔线，分隔线下按网格排 3–4 个元数据栏（类型 / 语言 / 许可证 / 版本）
+    canvas: "见 variants"
+    layout: 见 variants
     motif: 网格编号（01, 02…）、对齐标尺、单一强调色色块（≤ 8% 面积）
     content_rule: 元数据栏只写可从仓库读取的真实值
   section_header: 不做图；用原生 "##" 标题 + 横线 "---"

@@ -49,13 +49,31 @@ tokens:
     stroke: 3
     grid: 8
 
+alt_skeletons: [bento, manifesto, document]   # 兼容骨架，见 references/variation.md
+
+variants:                     # hero 构图变体；选一种并全套沿用
+  - id: diagonal
+    canvas: "1280x720"
+    hero: 对角线构图：标题左上，主体右下，一条斜向色块连接
+  - id: center-subject
+    canvas: "1280x720"
+    hero: 中心主体：主体居中放大到画布高 80%，标题压在主体下缘
+  - id: split-bleed
+    canvas: "1280x640"
+    hero: 分栏：左文右图，图出血到画布上、右、下三边
+  - id: magazine-cover
+    canvas: "1280x800"
+    hero: 杂志封面：顶部通栏刊头（项目名），主体铺满中部，四周 2–3 条"封面要目"写真实功能
+
+variation_limits:
+  font: [衬线, 压缩无衬线, "中文宋 / 黑 / 楷"]
+
+borrowable: [斜切叠压的物件, 期刊式期号与页码, 裁切标记]
+
 composition:
   hero:
-    canvas: "1280x720"
-    layout:                   # 选一种并全套沿用
-      - 对角线构图：标题左上，主体右下，一条斜向色块连接
-      - 中心主体：主体居中，标题压在主体下缘
-      - 分栏：左文右图，图出血到画布边缘
+    canvas: "见 variants"
+    layout: 见 variants
     subject:
       优先: 真实产品截图（放进设备框或裁切卡片）
       其次: 生图生成的主体（角色 / 场景 / 材质），去背景后作为图层嵌入

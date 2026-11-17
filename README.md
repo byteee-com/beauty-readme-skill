@@ -73,6 +73,7 @@ npx skills add byteee-com/beauty-readme-skill
 | **自动推荐** | 美化一下 README | 读项目、给风格打分，说明选择后开始制作 |
 | **多方案对比** | 给我几个方向看看 | 做三张不同版式的封面缩略稿，供你选择 |
 | **指定风格** | 用终端风格 | 直接采用指定风格；已有品牌规范时沿用品牌视觉 |
+| **再来一版** | 再来一版 / 不要这种 | 换种子重选变体与变奏，或排除当前风格 |
 
 <details open>
 <summary>只生成封面素材</summary>
@@ -99,6 +100,14 @@ npx skills add byteee-com/beauty-readme-skill
 | **瑞士网格** | 文档型，用网格和字重组织信息 | 库、框架、SDK、基础设施 | [mylib](styles/swiss-grid.example.svg) |
 | **霓虹终端** | 终端型，首屏展示命令和输出 | CLI、开发工具、TUI | [mytool](styles/terminal-neon.example.svg) |
 | **编辑海报** | 海报型，把截图或项目母题放进大封面 | 应用、AI 产品、创作项目、游戏 | [Tidemap](styles/editorial-poster.example.svg) |
+| **工程蓝图** | 文档型，尺寸线、剖面和图框标题栏 | 硬件、嵌入式、协议、基础设施 | [fluxbus](styles/blueprint.example.svg) |
+| **便当格** | 便当型，不等大的格子各装一条真实证据 | 框架、平台、SDK、AI 产品 | [kite](styles/bento-grid.example.svg) |
+| **像素复古** | 海报型，有限色板的像素画面 | 游戏、模拟器、TUI、玩具项目 | [picoquest](styles/retro-pixel.example.svg) |
+| **新粗野宣言** | 宣言型，粗边框、硬投影和划掉的对立项 | 零依赖、无构建等立场鲜明的工具 | [plainweb](styles/brutalist-zine.example.svg) |
+| **学术论文** | 论文型，论文首页、Figure 与图注 | 研究代码、模型、数据集 | [SparseKV](styles/academic-paper.example.svg) |
+| **孔版印刷** | 海报型，双色叠印、网点和套印错位 | 创作工具、字体、艺术、社区项目 | [Loomtype](styles/risograph.example.svg) |
+
+风格和骨架可以自由组合：每张风格卡列出兼容的骨架、2–4 种封面构图变体，以及可借给其他风格的元素。分析脚本按仓库名生成种子，在同样合理的变体、字体、质感、配色来源之间做选择，所以同类项目也不会得到同一张图。说"再来一版"时会换种子重选。规则见 [变奏系统](references/variation.md)。
 
 技能根据项目的真实素材确定视觉概念，再组合版式、视觉语言、配色和图文比重。本页的封面借用了排版校样的裁切线和网格，并标出了改版前分析脚本返回的 `swiss-grid`。
 
@@ -112,16 +121,16 @@ python3 scripts/analyze_repo.py . --json
 
 | 脚本 | 用途 | 常用参数 |
 | :-- | :-- | :-- |
-| [analyze_repo.py](scripts/analyze_repo.py) | 提取项目信号并推荐风格 | `--json` 输出结构化结果 |
+| [analyze_repo.py](scripts/analyze_repo.py) | 提取项目信号、推荐风格与变奏 | `--json` 输出结构化结果，`--seed` 换一版，`--exclude` 排除风格 |
 | [lint_svg.py](scripts/lint_svg.py) | 检查 GitHub 兼容性和实际显示字号 | `--display-width 830` |
-| [render_preview.py](scripts/render_preview.py) | 渲染 SVG 的桌面和移动端 PNG 预览 | `--github` 同时生成 830px 和 360px 版本 |
+| [render_preview.py](scripts/render_preview.py) | 渲染 SVG 的桌面和移动端 PNG 预览 | `--github` 同时生成 830px 和 360px 版本，`--scheme` 选择深浅色 |
 | [text_to_path.py](scripts/text_to_path.py) | 将文字转为 SVG 路径，避免字体回退 | `--font` 指定字体，`--font-map` 匹配多个字体 |
 | [demo_storyboard.py](scripts/demo_storyboard.py) | 从分镜生成深浅色动画 SVG 和 GIF | `extract` 提取提示词，`build --gif` 生成演示 |
 
 <details>
 <summary>可选依赖</summary>
 
-- `python3 -m pip install fonttools pyyaml` 用于文字转路径和读取 YAML 风格卡。
+- `python3 -m pip install fonttools` 用于文字转路径。读取风格卡不需要 PyYAML，安装了会优先使用。
 - `brew install resvg` 用于渲染预览。也可使用 `resvg-py`、`rsvg-convert` 或 `magick`。
 - `python3 -m pip install pillow` 可将深浅色预览拼成对比图。
 - Python 3.9–3.10 可安装 `tomli` 解析 TOML。Python 3.11 起可直接解析。
@@ -136,20 +145,20 @@ python3 scripts/analyze_repo.py . --json
 | 路径 | 内容 |
 | :-- | :-- |
 | [SKILL.md](SKILL.md) | 使用模式、设计流程和交付规则 |
-| [references/](references/) | [GitHub 渲染约束](references/github-constraints.md)、[内容结构](references/content-structure.md)、[原生 Markdown](references/native-markdown.md)、[动效](references/motion.md)、[自查清单](references/self-check.md) |
+| [references/](references/) | [GitHub 渲染约束](references/github-constraints.md)、[内容结构](references/content-structure.md)、[原生 Markdown](references/native-markdown.md)、[动效](references/motion.md)、[变奏系统](references/variation.md)、[自查清单](references/self-check.md) |
 | [styles/](styles/) | 风格卡与示例封面 |
-| [skeletons/](skeletons/) | 文档型、终端型和海报型 README 骨架 |
+| [skeletons/](skeletons/) | 文档型、终端型、海报型、便当型、宣言型和论文型 README 骨架 |
 | [scripts/](scripts/) | 分析、检查、渲染、文字转路径和演示生成 |
 | [assets/readme/](assets/readme/) | 本页的封面、分镜和[设计记录](assets/readme/DESIGN.md) |
 
 <details>
 <summary>新增风格</summary>
 
-1. 复制 `styles/` 下的 YAML，修改 `id`、`fit`、`signals`、`tokens`、`composition` 和 `forbid`。
+1. 复制 `styles/` 下的 YAML，修改 `id`、`fit`、`signals`、`variants`、`alt_skeletons`、`borrowable`、`tokens`、`composition` 和 `forbid`。
 2. 提供 `<id>.example.svg`。需要新版式时，在 `skeletons/` 新增骨架并更新风格卡的 `skeleton` 字段。
 3. 在 [SKILL.md 的风格库](SKILL.md#6-风格库) 登记新风格。
 
-安装 PyYAML 后，分析脚本会读取新风格卡。缺少 PyYAML 时使用三种内置风格。
+分析脚本会自动读取新风格卡，无需改代码。
 
 </details>
 

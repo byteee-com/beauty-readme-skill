@@ -4,19 +4,27 @@ analyze_repo.py — 提取仓库信号并为风格卡打分。
 
 用法:
     python3 analyze_repo.py <repo-path> [--json] [--styles <styles-dir>]
+                            [--seed N] [--exclude style-id ...]
 
 输出:
     - 项目类型候选、语言、生态、素材清单、主题色候选
     - 每张风格卡的得分与命中理由
+    - variation：主风格的变体、全局变奏轴、可选混搭（见 references/variation.md）
+    - compare_set：多方案对比时的三套组合（不同风格卡且不同骨架）
 脚本只做启发式初筛，Agent 必须结合自己读到的代码与 README 调整结论。
 
-依赖: Python 3.9+；可选 PyYAML（读取 styles/*.yaml，缺失时使用内置规则）。
+--seed: 默认用仓库名哈希，结果可复现；用户要"再来一版"时换一个数。
+--exclude: 用户说"不要这种风格"时排除对应风格卡。
+
+依赖: Python 3.9+；可选 PyYAML（缺失时用内置的 YAML 子集解析器读取 styles/*.yaml）。
 """
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
+import random
 import re
 import sys
 from collections import Counter
@@ -53,32 +61,10 @@ GAME_DEPS = {"three", "pixi.js", "phaser", "bevy", "pygame", "godot", "babylonjs
 AI_DEPS = {"openai", "anthropic", "@anthropic-ai/sdk", "langchain", "llama-index", "transformers",
            "torch", "ollama", "ai", "@ai-sdk/openai"}
 INFRA_HINT_FILES = {"Dockerfile", "docker-compose.yml", "helm", "charts", "terraform", "k8s"}
-
-# 内置风格规则（与 styles/*.yaml 保持一致；有 PyYAML 时以 YAML 为准）
-BUILTIN_STYLES = {
-    "terminal-neon": {
-        "fit": {"strong": ["cli", "devtool", "tui"], "ok": ["library", "infra"],
-                "avoid": ["design-resource", "consumer-app", "research"],
-                "needs": ["has_cli_entry"]},
-        "signals": [{"keyword": ["cli", "terminal", "shell", "command", "tui", "console", "prompt"]}],
-    },
-    "swiss-grid": {
-        "fit": {"strong": ["library", "framework", "infra", "sdk"], "ok": ["cli", "devtool", "research"],
-                "avoid": ["game", "consumer-app"], "needs": []},
-        "signals": [{"keyword": ["library", "framework", "sdk", "api", "protocol", "spec", "runtime",
-                                 "engine", "database", "compiler"]},
-                    {"meta": ["has_docs_site", "has_api_reference", "many_contributors"]}],
-    },
-    "editorial-poster": {
-        "fit": {"strong": ["consumer-app", "ai-product", "creative", "game", "design-resource"],
-                "ok": ["devtool", "research"], "avoid": ["infra", "sdk"],
-                "needs": ["has_visual_subject"]},
-        "signals": [{"keyword": ["app", "ai", "agent", "design", "creative", "game", "studio", "editor",
-                                 "generate", "visual", "story"]},
-                    {"meta": ["has_screenshots", "has_website"]}],
-    },
-}
-
+HARDWARE_DEPS = {"embassy", "cortex-m", "cortex-m-rt", "embedded-hal", "esp-idf-sys", "esp-idf-hal",
+                 "platformio", "zephyr", "rppal", "micropython", "adafruit-blinka"}
+HARDWARE_HINT_FILES = ("platformio.ini", "memory.x", "Kconfig", ".kicad_pcb", ".dts", "sdkconfig",
+                       "firmware/", "hardware/", "schematics/")
 
 # ---------------------------------------------------------------- helpers
 def walk(root: Path):
@@ -288,7 +274,7 @@ def analyze(root: Path) -> dict:
     types["consumer-app"] += kw("app", "desktop", "mobile", "web app")
     if deps_lower & GAME_DEPS:
         types["game"] += 3
-    types["game"] += kw("game", "play")
+    types["game"] += kw("game", "play", "emulator", "roguelike", "pixel", "retro")
     if deps_lower & AI_DEPS:
         types["ai-product"] += 3
     types["ai-product"] += kw("ai", "llm", "agent", "gpt", "claude", "model")
@@ -304,8 +290,15 @@ def analyze(root: Path) -> dict:
     if has_notebook or has_citation:
         types["research"] += 3
     types["research"] += kw("paper", "research", "dataset", "benchmark", "arxiv")
-    types["design-resource"] += kw("icons", "font", "theme", "design system", "ui kit", "figma")
-    types["creative"] += kw("art", "music", "creative", "drawing", "story", "visual")
+    types["design-resource"] += kw("icons", "font", "typeface", "theme", "design system", "ui kit", "figma")
+    types["creative"] += kw("art", "music", "creative", "drawing", "story", "visual", "generative", "zine",
+                            "creative coding", "shader")
+    if deps_lower & HARDWARE_DEPS:
+        types["hardware"] += 3
+    if any(h in r for r in rel for h in HARDWARE_HINT_FILES):
+        types["hardware"] += 2
+    types["hardware"] += kw("embedded", "firmware", "hardware", "microcontroller", "mcu", "arduino",
+                            "esp32", "rtos", "robot", "fpga", "pcb")
     project_types = [t for t, s in types.most_common() if s > 0][:4]
 
     facts = {
@@ -344,25 +337,147 @@ def analyze(root: Path) -> dict:
     }
 
 
-# ---------------------------------------------------------------- scoring
+# ---------------------------------------------------------------- style cards
+def _strip_comment(line: str) -> str:
+    quote = None
+    for i, ch in enumerate(line):
+        if quote:
+            if ch == quote:
+                quote = None
+        elif ch in "\"'":
+            quote = ch
+        elif ch == "#" and (i == 0 or line[i - 1] in " \t"):
+            return line[:i].rstrip()
+    return line.rstrip()
+
+
+def _split_top(text: str, sep: str = ",") -> list[str]:
+    parts, depth, quote, cur = [], 0, None, ""
+    for ch in text:
+        if quote:
+            quote = None if ch == quote else quote
+        elif ch in "\"'":
+            quote = ch
+        elif ch in "[{":
+            depth += 1
+        elif ch in "]}":
+            depth -= 1
+        elif ch == sep and depth == 0:
+            parts.append(cur.strip())
+            cur = ""
+            continue
+        cur += ch
+    if cur.strip():
+        parts.append(cur.strip())
+    return parts
+
+
+def _split_key(text: str):
+    """返回 (key, value)；不是 'key: value' 形式时返回 None。"""
+    quote = None
+    for i, ch in enumerate(text):
+        if quote:
+            quote = None if ch == quote else quote
+        elif ch in "\"'":
+            quote = ch
+        elif ch == ":" and (i + 1 == len(text) or text[i + 1] == " "):
+            return text[:i].strip().strip("\"'"), text[i + 1:].strip()
+    return None
+
+
+def _scalar(text: str):
+    t = text.strip()
+    if not t:
+        return None
+    if t[0] in "\"'" and t[-1] == t[0]:
+        return t[1:-1]
+    if t.startswith("[") and t.endswith("]"):
+        return [_scalar(x) for x in _split_top(t[1:-1])]
+    if t.startswith("{") and t.endswith("}"):
+        out = {}
+        for item in _split_top(t[1:-1]):
+            kv = _split_key(item)
+            if kv:
+                out[kv[0]] = _scalar(kv[1])
+        return out
+    low = t.lower()
+    if low in ("true", "false"):
+        return low == "true"
+    if low in ("null", "~"):
+        return None
+    if re.fullmatch(r"-?\d+", t):
+        return int(t)
+    if re.fullmatch(r"-?\d+\.\d+", t):
+        return float(t)
+    return t
+
+
+def mini_yaml(text: str):
+    """风格卡用到的 YAML 子集：缩进映射、块列表、行内 [] / {}、引号字符串、注释。"""
+    lines = []
+    for raw in text.splitlines():
+        line = _strip_comment(raw)
+        if line.strip():
+            lines.append([len(line) - len(line.lstrip(" ")), line.strip()])
+
+    def block(i: int, indent: int):
+        if i >= len(lines):
+            return None, i
+        if lines[i][1].startswith("- ") or lines[i][1] == "-":
+            out = []
+            while i < len(lines) and lines[i][0] == indent and lines[i][1].startswith("-"):
+                rest = lines[i][1][1:].strip()
+                if rest and _split_key(rest) and not rest.startswith(("[", "{", "\"", "'")):
+                    lines[i] = [indent + 2, rest]
+                    val, i = block(i, indent + 2)
+                elif rest:
+                    val, i = _scalar(rest), i + 1
+                else:
+                    val, i = block(i + 1, lines[i + 1][0]) if i + 1 < len(lines) else (None, i + 1)
+                out.append(val)
+            return out, i
+        out = {}
+        while i < len(lines) and lines[i][0] == indent:
+            kv = _split_key(lines[i][1])
+            if not kv:
+                i += 1
+                continue
+            key, val = kv
+            i += 1
+            if val:
+                out[key] = _scalar(val)
+            elif i < len(lines) and (lines[i][0] > indent or
+                                     (lines[i][0] == indent and lines[i][1].startswith("-"))):
+                out[key], i = block(i, lines[i][0])
+            else:
+                out[key] = None
+        return out, i
+
+    return block(0, lines[0][0])[0] if lines else {}
+
+
 def load_styles(styles_dir: Path) -> dict:
     try:
         import yaml  # type: ignore
+        parse = yaml.safe_load
     except ImportError:
-        return BUILTIN_STYLES
+        parse = mini_yaml
     styles = {}
     for p in sorted(styles_dir.glob("*.yaml")):
         try:
-            data = yaml.safe_load(p.read_text(encoding="utf-8"))
+            data = parse(p.read_text(encoding="utf-8"))
         except Exception as e:  # noqa: BLE001
             print(f"[warn] 无法解析 {p.name}: {e}", file=sys.stderr)
             continue
         if isinstance(data, dict) and data.get("id"):
             styles[data["id"]] = data
-    return styles or BUILTIN_STYLES
+    if not styles:
+        print(f"[warn] {styles_dir} 中没有可用的风格卡", file=sys.stderr)
+    return styles
 
 
-def score_styles(info: dict, styles: dict) -> list[dict]:
+# ---------------------------------------------------------------- scoring
+def score_styles(info: dict, styles: dict, exclude: set[str] | None = None) -> list[dict]:
     results = []
     ptypes = info["project_types"]
     primary = ptypes[:2]
@@ -372,7 +487,10 @@ def score_styles(info: dict, styles: dict) -> list[dict]:
     facts = info["facts"]
 
     for sid, style in styles.items():
-        fit = style.get("fit", {})
+        if exclude and sid in exclude:
+            results.append({"id": sid, "score": None, "eligible": False, "reasons": ["用户排除"]})
+            continue
+        fit = style.get("fit", {}) or {}
         score, reasons = 0, []
         missing = [n for n in fit.get("needs", []) or [] if not facts.get(n, False)]
         if missing:
@@ -429,12 +547,107 @@ def recommend(results: list[dict]) -> dict:
     return {"mode": "auto", "pick": top["id"], "note": "得分领先，可直接自动推荐"}
 
 
+# ---------------------------------------------------------------- variation
+GLOBAL_AXES = {
+    "anchor": ["左重", "右重", "下沉", "中轴", "对角", "出血裁切"],
+    "palette_source": ["品牌色", "截图取色", "生态色", "物件本色", "单色 + 一点"],
+    "font": ["新怪诞无衬线", "衬线", "等宽", "压缩无衬线", "圆体", "中文宋 / 黑 / 楷"],
+    "texture": ["平涂", "颗粒", "网点", "扫描线", "纸纹", "套印错位", "无"],
+    "density": ["极简", "平衡", "信息密集"],
+    "dark_mode": ["夜景", "发光屏", "负片 / 晒图", "荧光油墨", "同场景换时间"],
+}
+
+
+def make_rng(name: str, seed: int | None) -> tuple[random.Random, int]:
+    key = name if seed is None else f"{name}:{seed}"
+    value = int(hashlib.sha1(key.encode("utf-8")).hexdigest()[:12], 16)
+    return random.Random(value), value
+
+
+def pick_variant(style: dict, rng: random.Random) -> dict | None:
+    variants = [v for v in style.get("variants") or [] if isinstance(v, dict)]
+    return dict(rng.choice(variants)) if variants else None
+
+
+def pick_axes(style: dict, info: dict, rng: random.Random) -> dict:
+    limits = style.get("variation_limits") or {}
+    axes = {}
+    for axis, options in GLOBAL_AXES.items():
+        allowed = [o for o in (limits.get(axis) or options)]
+        if axis == "palette_source":
+            real_brand = any(not c["source"].startswith("ecosystem:") for c in info["brand_colors"])
+            if real_brand and "品牌色" in allowed:
+                axes[axis] = "品牌色（仓库已有，优先）"
+                continue
+            allowed = [o for o in allowed if o != "品牌色"] or allowed
+            if not info["facts"]["has_screenshots"]:
+                allowed = [o for o in allowed if o != "截图取色"] or allowed
+        axes[axis] = rng.choice(allowed)
+    return axes
+
+
+def build_variation(info: dict, styles: dict, results: list[dict], rec: dict,
+                    seed: int | None) -> dict | None:
+    pick = rec.get("pick")
+    if not pick or pick not in styles:
+        return None
+    rng, value = make_rng(info["name"], seed)
+    style = styles[pick]
+    variant = pick_variant(style, rng)
+    axes = pick_axes(style, info, rng)
+    borrow = None
+    eligible = [r for r in results if r["eligible"] and r["id"] != pick]
+    if eligible:
+        second = eligible[0]
+        items = styles.get(second["id"], {}).get("borrowable") or []
+        top_score = next(r["score"] for r in results if r["id"] == pick)
+        if items and second["score"] is not None and second["score"] >= max(1, top_score) * 0.6:
+            borrow = {"from": second["id"], "element": rng.choice(items),
+                      "note": "可选：只借一个元素，用主风格的配色重画"}
+    canvas = (variant or {}).get("canvas", "?")
+    signature = " · ".join(str(x) for x in [
+        pick, style.get("skeleton", "?"), f"variant={(variant or {}).get('id', '-')}", canvas,
+        axes["anchor"], axes["palette_source"], axes["font"], axes["texture"], axes["density"], axes["dark_mode"],
+    ]) + (f" + borrow:{borrow['from']}.{borrow['element']}" if borrow else "")
+    return {
+        "seed": value,
+        "style": pick,
+        "skeleton": style.get("skeleton"),
+        "alt_skeletons": style.get("alt_skeletons") or [],
+        "variant": variant,
+        "axes": axes,
+        "borrow": borrow,
+        "signature": signature,
+        "note": "种子只在同样合理的选项间打破平局；概念需要时直接改，并在理由里说明",
+    }
+
+
+def build_compare_set(info: dict, styles: dict, results: list[dict], seed: int | None) -> list[dict]:
+    """多方案对比：最多 3 套，风格卡不同且骨架不同。"""
+    rng, _ = make_rng(info["name"] + "#compare", seed)
+    chosen, used = [], set()
+    for r in [x for x in results if x["eligible"]]:
+        style = styles.get(r["id"], {})
+        for sk in [style.get("skeleton")] + list(style.get("alt_skeletons") or []):
+            if sk and sk not in used:
+                used.add(sk)
+                v = pick_variant(style, rng)
+                chosen.append({"style": r["id"], "score": r["score"], "skeleton": sk,
+                               "variant": (v or {}).get("id"), "canvas": (v or {}).get("canvas")})
+                break
+        if len(chosen) == 3:
+            break
+    return chosen
+
+
 # ---------------------------------------------------------------- output
 def main() -> int:
     ap = argparse.ArgumentParser(description="提取仓库信号并为 README 风格打分")
     ap.add_argument("repo", type=Path)
     ap.add_argument("--json", action="store_true", help="输出 JSON")
     ap.add_argument("--styles", type=Path, default=Path(__file__).resolve().parent.parent / "styles")
+    ap.add_argument("--seed", type=int, default=None, help="变奏种子；默认用仓库名哈希。'再来一版'时换一个数")
+    ap.add_argument("--exclude", nargs="*", default=[], help="排除的风格卡 id")
     args = ap.parse_args()
 
     root = args.repo.resolve()
@@ -443,9 +656,12 @@ def main() -> int:
         return 2
 
     info = analyze(root)
-    results = score_styles(info, load_styles(args.styles))
+    styles = load_styles(args.styles)
+    results = score_styles(info, styles, set(args.exclude))
     info["style_scores"] = results
     info["recommendation"] = recommend(results)
+    info["variation"] = build_variation(info, styles, results, info["recommendation"], args.seed)
+    info["compare_set"] = build_compare_set(info, styles, results, args.seed)
     info.pop("_text_blob", None)
     info.pop("_files", None)
 
@@ -468,6 +684,20 @@ def main() -> int:
         print(f"- {r['id']:<18} {s}  " + "; ".join(r["reasons"][:6]))
     rec = info["recommendation"]
     print(f"\n## 建议: 模式={rec['mode']}  风格={rec['pick']}\n{rec['note']}")
+    var = info["variation"]
+    if var:
+        print("\n## 变奏（references/variation.md）")
+        v = var["variant"] or {}
+        print(f"变体: {v.get('id', '-')} ({v.get('canvas', '?')}) {v.get('hero', '')}")
+        print(f"兼容骨架: {var['skeleton']} / {', '.join(var['alt_skeletons']) or '—'}")
+        print("变奏轴: " + "；".join(f"{k}={val}" for k, val in var["axes"].items()))
+        if var["borrow"]:
+            print(f"可选混搭: 从 {var['borrow']['from']} 借「{var['borrow']['element']}」")
+        print(f"签名: {var['signature']}")
+    if info["compare_set"]:
+        print("\n## 多方案对比候选")
+        for c in info["compare_set"]:
+            print(f"- {c['style']} · {c['skeleton']} · {c['variant']} ({c['canvas']})")
     return 0
 
 

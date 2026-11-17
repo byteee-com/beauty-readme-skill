@@ -1,0 +1,94 @@
+# 风格卡：工程型 · 蓝图
+id: blueprint
+name: 工程蓝图
+skeleton: document            # 对应 skeletons/document.md
+alt_skeletons: [paper, bento]
+example: blueprint.example.svg
+summary: 像一张晒图工程图纸：尺寸线、剖面、图框标题栏；把项目的真实结构（协议帧、模块、引脚、数据布局）画成可测量的图。
+
+fit:
+  strong: [hardware, infra]
+  ok: [library, framework, sdk, devtool, research]
+  avoid: [consumer-app, creative, design-resource]
+  needs: []
+signals:
+  - keyword: [embedded, firmware, hardware, protocol, architecture, kernel, compiler, network, driver, robot, pcb, arduino, esp32, rtos, bus, packet]
+  - file: [docs/architecture, schematics/, hardware/, firmware/, "*.kicad_pcb", "*.dts", Kconfig]
+  - dependency: [embassy, cortex-m, esp-idf, zephyr, platformio, tokio, nom]
+  - meta: [has_docs_site]
+
+default_weight: L2            # hero 图纸 + 一张架构 / 数据布局图
+allows_raster: false
+allows_gif: false
+
+variants:
+  - id: elevation
+    canvas: "1280x640"
+    hero: 正视图：项目的一个真实结构（帧格式、内存布局、模块栈）横向展开成一条带尺寸标注的长条，右下角是图框标题栏（项目名 / 图号 / 版本 / 许可证）
+  - id: exploded-view
+    canvas: "1280x720"
+    hero: 爆炸图：3–5 个真实模块沿一条 30° 斜轴分离，每块引出编号气泡，左侧零件表对应真实模块名
+  - id: section-cut
+    canvas: "1280x640"
+    hero: 剖面图：一个模块被剖开，剖面线（45° 细斜线填充）露出内部真实层次；剖切符号 A–A 标在边上
+  - id: title-block-only
+    canvas: "1280x360"
+    hero: 极简横幅：整张图只是一个放大的图框标题栏，项目名占最大格，其他格写真实元数据，外框带对位刻度
+
+variation_limits:
+  font: [等宽]
+  texture: [纸纹, 平涂, 无]
+  palette_source: [物件本色, 品牌色]
+
+tokens:
+  light:                      # 白图（whiteprint）：白纸蓝线
+    bg: "#F4F7FA"
+    grid: "#D5E1EC"
+    fg: "#0E3A66"             # 对比度 ≈ 11:1
+    muted: "#4A6A8A"          # ≈ 5.2:1
+    accent: "{brand|#E8590C}" # 红铅笔批注色，只用于 1 处修订标记
+  dark:                       # 晒图（cyanotype）：普鲁士蓝底白线
+    bg: "#0F3A64"
+    grid: "#1F5285"
+    fg: "#F2F7FC"             # ≈ 11:1
+    muted: "#A9C4DF"          # ≈ 6:1
+    accent: "{brand_lightened|#FFB46B}"
+  type:
+    display: 工程字体（Iosevka Etoile / Recursive Mono / ISOCPEUR 类）或等宽粗体，转路径；中文用思源黑体 Medium
+    mono: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+    scale: { title: 112, subtitle: 30, label: 22, dimension: 22 }
+    rules:
+      - 尺寸数字与零件编号用等宽
+      - 标题栏内文字一律左对齐，不居中
+  shape:
+    radius: 0
+    stroke: "主线 3 / 尺寸线 1.5 / 网格 1"
+    grid: "32px 方格，每 4 格一条粗线"
+
+composition:
+  hero:
+    canvas: "见 variants"
+    layout: 见 variants
+    motif: 尺寸线（两端箭头 + 中间数字）、中心线（点划线）、剖面线、图框对位刻度、修订云线
+    content_rule: 尺寸数字只能来自真实规格（字段位宽、字节数、引脚号、层数）；没有真实尺寸时只画结构不标数字
+  section_header: 不做图；用原生 "##" 标题
+  diagram: 架构图沿用图纸语言：直角走线、引出线 + 编号气泡、图例放右下
+
+borrowable: [尺寸标注线, 图框标题栏, 剖面线填充]
+
+tension:
+  - 精确即装饰：画面的全部装饰都来自工程语法（尺寸线、中心线、刻度），没有任何纯装饰图形
+  - 尺度对比：一个被放大的局部详图（"详图 B 2:1"）与全局视图并置
+  - 出血：图纸网格与长条结构撞出画布左右两缘
+  - 单点批注：唯一的强调色是一处红铅笔修订云线，圈住最关键的真实字段
+
+motion:
+  default: false
+  allowed: [尺寸线依次画出]
+
+forbid:
+  - 虚构尺寸、引脚号、性能参数
+  - 渐变、阴影、发光、圆角
+  - 齿轮、扳手等通用工程图标
+  - 3D 透视渲染（只用正投影与轴测）
+  - 深色版只做反色：深色必须是晒图蓝底，而不是黑底

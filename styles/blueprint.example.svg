@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640" role="img" aria-labelledby="title desc">
+  <title id="title">fluxbus：为 MCU 设计的零分配 CAN 总线协议栈</title>
+  <desc id="desc">示例 hero（工程蓝图风格，elevation 变体）。一条 CAN 2.0A 标准数据帧横向展开成带尺寸标注的长条并撞出右缘，红铅笔云线圈出仲裁域，右下角为图框标题栏。帧格式与位宽取自 CAN 2.0A 规范，项目名与元数据为占位示例。</desc>
+  <defs>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M32 0H0V32" class="grid-fine"/>
+    </pattern>
+    <pattern id="grid4" width="128" height="128" patternUnits="userSpaceOnUse">
+      <rect width="128" height="128" fill="url(#grid)"/>
+      <path d="M128 0H0V128" class="grid-bold"/>
+    </pattern>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 1L10 5L0 9" class="arrow"/>
+    </marker>
+  </defs>
+  <style>
+    :root { --bg:#F4F7FA; --grid:#D5E1EC; --fg:#0E3A66; --muted:#4A6A8A; --accent:#E8590C; --cell:#F4F7FA; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg:#0F3A64; --grid:#1F5285; --fg:#F2F7FC; --muted:#A9C4DF; --accent:#FFB46B; --cell:#0F3A64; }
+    }
+    .bg { fill: var(--bg); }
+    .grid-fine { fill: none; stroke: var(--grid); stroke-width: 1; }
+    .grid-bold { fill: none; stroke: var(--grid); stroke-width: 2; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+    .cjk { font-family: -apple-system, "PingFang SC", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif; }
+    .title { fill: var(--fg); font-size: 112px; font-weight: 700; letter-spacing: -3px; }
+    .sub { fill: var(--fg); font-size: 30px; }
+    .label { fill: var(--muted); font-size: 22px; letter-spacing: 1px; }
+    .field { fill: var(--fg); font-size: 22px; font-weight: 700; }
+    .dim { fill: var(--fg); font-size: 22px; }
+    .value { fill: var(--fg); font-size: 26px; font-weight: 700; }
+    .note { fill: var(--accent); font-size: 22px; font-weight: 700; }
+    .line { fill: none; stroke: var(--fg); stroke-width: 3; }
+    .thin { fill: none; stroke: var(--fg); stroke-width: 1.5; }
+    .center { fill: none; stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 24 6 4 6; }
+    .arrow { fill: none; stroke: var(--fg); stroke-width: 1.5; }
+    .cloud { fill: none; stroke: var(--accent); stroke-width: 3; }
+    .cell { fill: var(--cell); }
+    .hatch { stroke: var(--fg); stroke-width: 1; opacity: .35; }
+  </style>
+
+  <rect class="bg" width="1280" height="640"/>
+  <rect width="1280" height="640" fill="url(#grid4)"/>
+
+  <!-- 图号与标题 -->
+  <text x="64" y="72" class="mono label">DWG FB-001 · ELEVATION · 1 : 1 bit</text>
+  <text x="58" y="180" class="mono title">fluxbus</text>
+  <text x="64" y="228" class="cjk sub">为 MCU 设计的零分配 CAN 总线协议栈</text>
+
+  <!-- 中心线 -->
+  <line x1="0" y1="352" x2="1280" y2="352" class="center"/>
+
+  <!-- CAN 2.0A 数据帧：字段宽度按视觉比例，位宽见下方尺寸线 -->
+  <g class="mono">
+    <rect x="40" y="312" width="1300" height="80" class="cell"/>
+    <path d="M40 312H1340M40 392H1340" class="line"/>
+    <path d="M40 312V392M80 312V392M280 312V392M336 312V392M392 312V392M448 312V392M548 312V392M928 312V392M1128 312V392M1198 312V392" class="line"/>
+    <!-- DATA 字段：剖面线，表示可变长度 -->
+    <g class="hatch">
+      <path d="M560 392L640 312M600 392L680 312M640 392L720 312M680 392L760 312M720 392L800 312M760 392L840 312M800 392L880 312M840 392L920 312M880 392L928 344"/>
+    </g>
+    <text x="60" y="361" class="field" text-anchor="middle" data-decorative="true" font-size="16">S</text>
+    <text x="180" y="361" class="field" text-anchor="middle">ID</text>
+    <text x="308" y="361" class="field" text-anchor="middle" data-decorative="true" font-size="18">RTR</text>
+    <text x="364" y="361" class="field" text-anchor="middle" data-decorative="true" font-size="18">IDE</text>
+    <text x="420" y="361" class="field" text-anchor="middle" data-decorative="true" font-size="18">r0</text>
+    <text x="498" y="361" class="field" text-anchor="middle">DLC</text>
+    <text x="738" y="361" class="field" text-anchor="middle">DATA</text>
+    <text x="1028" y="361" class="field" text-anchor="middle">CRC</text>
+    <text x="1163" y="361" class="field" text-anchor="middle">ACK</text>
+    <text x="1240" y="361" class="field" text-anchor="middle">EOF</text>
+  </g>
+
+  <!-- 尺寸线（单位 bit） -->
+  <g class="mono">
+    <path d="M80 400V444M280 400V444M548 400V444M928 400V444M1128 400V444" class="thin"/>
+    <line x1="84" y1="432" x2="276" y2="432" class="thin" marker-start="url(#arr)" marker-end="url(#arr)"/>
+    <text x="180" y="468" class="dim" text-anchor="middle">11</text>
+    <line x1="552" y1="432" x2="924" y2="432" class="thin" marker-start="url(#arr)" marker-end="url(#arr)"/>
+    <text x="738" y="468" class="dim" text-anchor="middle">0 – 64</text>
+    <line x1="932" y1="432" x2="1124" y2="432" class="thin" marker-start="url(#arr)" marker-end="url(#arr)"/>
+    <text x="1028" y="468" class="dim" text-anchor="middle">15</text>
+    <path d="M448 400V444" class="thin"/>
+    <line x1="452" y1="432" x2="544" y2="432" class="thin" marker-start="url(#arr)" marker-end="url(#arr)"/>
+    <text x="498" y="468" class="dim" text-anchor="middle">4</text>
+  </g>
+
+  <!-- 红铅笔修订云线：仲裁域 -->
+  <path class="cloud" d="M302.0 352.0A17.4 17.4 0 0 1 289.7 377.2A24.7 24.7 0 0 1 255.3 397.3A31.6 31.6 0 0 1 205.6 408.5A34.2 34.2 0 0 1 150.4 408.5A31.6 31.6 0 0 1 100.7 397.3A24.7 24.7 0 0 1 66.3 377.2A17.4 17.4 0 0 1 54.0 352.0A17.4 17.4 0 0 1 66.3 326.8A24.7 24.7 0 0 1 100.7 306.7A31.6 31.6 0 0 1 150.4 295.5A34.2 34.2 0 0 1 205.6 295.5A31.6 31.6 0 0 1 255.3 306.7A24.7 24.7 0 0 1 289.7 326.8A17.4 17.4 0 0 1 302.0 352.0Z"/>
+  <line x1="282" y1="314" x2="340" y2="272" class="cloud"/>
+  <text x="348" y="276" class="mono note">ARBITRATION · 仲裁域</text>
+
+  <!-- 图注 -->
+  <text x="64" y="540" class="cjk label">CAN 2.0A 标准数据帧 · 尺寸单位 bit</text>
+  <text x="64" y="576" class="cjk label">字段顺序取自 ISO 11898-1</text>
+
+  <!-- 图框标题栏 -->
+  <g class="mono">
+    <rect x="744" y="492" width="472" height="120" class="cell"/>
+    <rect x="744" y="492" width="472" height="120" class="line"/>
+    <path d="M744 552H1216M968 492V612M1096 492V612" class="thin"/>
+    <text x="760" y="518" class="label">PROJECT</text>
+    <text x="760" y="544" class="value">fluxbus</text>
+    <text x="984" y="518" class="label">DWG</text>
+    <text x="984" y="544" class="value">FB-001</text>
+    <text x="1112" y="518" class="label">REV</text>
+    <text x="1112" y="544" class="value">A</text>
+    <text x="760" y="578" class="label">RUST · no_std</text>
+    <text x="760" y="602" class="value" data-decorative="true" font-size="20">embedded</text>
+    <text x="984" y="578" class="label">LICENSE</text>
+    <text x="984" y="602" class="value">MIT</text>
+    <text x="1112" y="578" class="label">SHEET</text>
+    <text x="1112" y="602" class="value">1/1</text>
+  </g>
+</svg>

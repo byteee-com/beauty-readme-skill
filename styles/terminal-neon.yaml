@@ -50,11 +50,33 @@ tokens:
     stroke: 1.5
     grid: 8
 
+alt_skeletons: [manifesto, document]   # 兼容骨架，见 references/variation.md
+
+variants:                     # hero 构图变体；按概念挑选，平局时由种子决定
+  - id: split-window
+    canvas: "1280x640"
+    hero: 左侧 40% 放项目名与一句话定位；右侧 60% 放终端窗口，窗口可溢出右缘
+  - id: full-bleed-output
+    canvas: "1280x640"
+    hero: 没有窗口框，真实输出铺满整个画布；项目名作为输出里的一行注释或高亮行出现，其余行压暗
+  - id: before-after
+    canvas: "1280x480"
+    hero: 上下或左右两个窗格，旧做法与新做法的真实命令对照；只在 README 已有真实替代方案时使用
+  - id: giant-prompt
+    canvas: "1280x480"
+    hero: 一个超大提示符、光标或退出码作为构图锚点，占画布高 ≥ 60%；单条真实命令贴在底部基线上
+
+variation_limits:
+  font: [等宽]
+  texture: [扫描线, 平涂, 无]
+
+borrowable: [真实输出片段, 闪烁块光标, 管道式流程线]
+
 # ---- 构图 ----
 composition:
   hero:
-    canvas: "1280x640"
-    layout: 左侧 40% 放项目名与一句话定位；右侧 60% 放终端窗口
+    canvas: "见 variants"
+    layout: 见 variants
     terminal_window:
       - 顶栏三个圆点用灰色而非红黄绿（避免套路），或改用标签页显示真实二进制名
       - 内容只能是真实命令及真实输出（来自项目 README / 示例 / 实际运行）

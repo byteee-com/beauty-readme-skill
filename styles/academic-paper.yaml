@@ -1,0 +1,94 @@
+# 风格卡：研究型 · 学术论文
+id: academic-paper
+name: 学术论文
+skeleton: paper               # 对应 skeletons/paper.md
+alt_skeletons: [document]
+example: academic-paper.example.svg
+summary: 像一篇论文首页：衬线标题、摘要框、Figure 1 与图注；让研究代码、模型、数据集看起来可信、可引用。
+
+fit:
+  strong: [research]
+  ok: [library, ai-product, framework]
+  avoid: [game, consumer-app, tui]
+  needs: []
+signals:
+  - keyword: [paper, arxiv, research, dataset, benchmark, model, training, inference, reproduce, citation, theorem, algorithm]
+  - file: [CITATION.cff, paper/, notebooks/, experiments/, configs/, "*.bib", "*.ipynb", "*.tex"]
+  - dependency: [torch, jax, tensorflow, transformers, numpy, scipy, matplotlib, sympy]
+  - meta: [has_docs_site]
+
+default_weight: L2            # 论文首页 hero + 方法示意图
+allows_raster: false
+allows_gif: false
+
+variants:
+  - id: title-page
+    canvas: "1280x720"
+    hero: 论文首页：顶部 arXiv 式竖排编号条（只写真实编号，没有则写 preprint），衬线标题、作者行、摘要框，右侧 Figure 1 方法示意
+  - id: figure-first
+    canvas: "1280x640"
+    hero: Figure 1 占画布 70%，标题缩到顶部一行，底部是完整图注（"Figure 1. …"）
+  - id: two-column
+    canvas: "1280x720"
+    hero: 双栏排版的页面局部：左栏摘要 + 公式，右栏图表，页面被画布裁切，露出页码
+  - id: equation
+    canvas: "1280x480"
+    hero: 一个项目核心公式（必须来自论文 / 源码）放到极大，下方编号 (1) 与一句话解释
+
+variation_limits:
+  texture: [纸纹, 无]
+  font: [衬线, "中文宋 / 黑 / 楷"]
+
+tokens:
+  light:
+    bg: "#FBFAF7"
+    fg: "#1A1A1A"             # 对比度 ≈ 17:1
+    muted: "#5A5A5A"
+    rule: "#1A1A1A"
+    accent: "{brand|#B3261E}" # 期刊红：只用于 Figure 中的"本文方法"
+    support: "#2F5D8A"        # 基线方法
+  dark:                       # 投影仪讲稿：深灰底、暖白字
+    bg: "#1B1C1E"
+    fg: "#EDEAE3"
+    muted: "#A8A49C"
+    rule: "#EDEAE3"
+    accent: "{brand_lightened|#FF8A7A}"
+    support: "#8DB6E0"
+  type:
+    display: 书籍衬线（Computer Modern / Libertinus / Source Serif / EB Garamond；中文用思源宋体），转路径
+    body: "'Iowan Old Style', Georgia, 'Songti SC', serif"
+    math: 数学斜体（STIX Two Math / Latin Modern Math），公式转路径
+    scale: { title: 64, author: 26, abstract: 24, caption: 22 }
+    rules:
+      - 标题句首大写或中文，不用全大写
+      - 图注以 "Figure N." 或 "图 N." 开头
+  shape:
+    radius: 0
+    stroke: 1.5
+
+composition:
+  hero:
+    canvas: "见 variants"
+    layout: 见 variants
+    motif: 摘要框、编号公式、Figure 图注、页码、脚注上标、arXiv 侧边编号条
+    content_rule: 作者、机构、会议名、arXiv 编号、实验数字必须来自 CITATION.cff / 论文 / README；缺失时用 "{作者}" 等占位并在交付说明列出
+  section_header: 不做图；章节用 "## 1. 方法" 式编号
+  diagram: Figure 风格方法图：细线、图例、(a)(b)(c) 子图标签；图表若含数值必须来自真实实验
+
+borrowable: [Figure 图注, 编号公式, 摘要框]
+
+tension:
+  - 纸面秩序：大量留白与严格的页边距，让一个 Figure 成为唯一视觉重心
+  - 尺度对比：放大的核心公式或 Figure 与 22px 图注并置
+  - 局部裁切：页面被画布截断，暗示"这是一篇完整论文的一页"
+  - 单色强调：只有"本文方法"用强调色，其余全部黑灰
+
+motion:
+  default: false
+  allowed: []
+
+forbid:
+  - 虚构作者、机构、会议录用、引用数、SOTA 数字
+  - 没有真实数据支撑的柱状图 / 曲线（示意图必须标"示意"且不带刻度数字）
+  - 科技感蓝紫渐变、神经网络发光节点
+  - 无衬线大标题（会失去论文感）
